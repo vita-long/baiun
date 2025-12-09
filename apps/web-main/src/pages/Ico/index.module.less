@@ -1,0 +1,86 @@
+.container {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+.container h2 {
+  color: #333;
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.loading {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 2px;
+  text-align: center;
+  color: #1890ff;
+}
+
+.previewContainer {
+  margin-top: 24px;
+}
+
+.previewCard {
+  max-width: 400px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* 上传按钮样式 */
+:global(.ant-upload.ant-upload-select-picture-card) {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  transition: all 0.3s;
+}
+
+:global(.ant-upload.ant-upload-select-picture-card:hover) {
+  border-color: #1890ff;
+}
+
+/* 修复上传按钮内图标和文字的样式 */
+:global(.ant-upload.ant-upload-select-picture-card .ant-upload) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 文件列表样式 */
+:global(.ant-upload-list-picture-card) {
+  margin-bottom: 24px;
+}
+
+:global(.ant-upload-list-picture-card .ant-upload-list-item) {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .previewCard {
+    max-width: 100%;
+  }
+
+  :global(.ant-upload-list-picture-card .ant-upload-list-item) {
+    width: 100px;
+    height: 100px;
+  }
+}

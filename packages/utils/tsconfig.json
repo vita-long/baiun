@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node10",
+    "module": "esnext",
+    /* 子包特定配置，会覆盖根配置中的同名设置 */
+    "rootDir": "./src", /* 指定此包的源文件根目录 */
+    "outDir": "./dist", /* 指定此包的输出目录 */
+    "declarationDir": "./dist", /* 指定声明文件的输出目录 */
+    "composite": true, /* 确保子包可以被父项目引用 */
+    "tsBuildInfoFile": "./dist/.tsbuildinfo", /* 子包的增量编译信息文件 */
+    /* 确保生成类型声明文件 */
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ], /* 仅包含当前包的源文件 */
+  "references": [] /* 可以添加对此包依赖的其他子包的引用 */
+}

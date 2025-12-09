@@ -1,0 +1,42 @@
+{
+  "name": "@baiun/utils",
+  "version": "0.0.2",
+  "description": "工具包",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build:js": "tsup",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "build": "pnpm run clean && pnpm run build:js && pnpm run build:dts",
+    "dev": "tsup --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ]
+}

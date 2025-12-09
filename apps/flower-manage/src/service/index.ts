@@ -1,0 +1,31 @@
+import { RequestClient } from '@baiun/utils';
+import { storage } from '@/utils/storage';
+
+// 使用Vite的环境变量，避免TypeScript错误
+// 开发环境默认配置
+const DEFAULT_DEV_API = 'http://localhost:3012';
+const DEFAULT_PROD_API = 'http://47.93.63.238:3012';
+const DEFAULT_API_PREFIX = '/api';
+
+// 根据import.meta.env获取环境变量，使用VITE_前缀，提供默认值
+const apiHost = import.meta.env.VITE_API_HOST || (import.meta.env.DEV ? DEFAULT_DEV_API : DEFAULT_PROD_API);
+const apiPrefix = import.meta.env.VITE_API_PREFIX || DEFAULT_API_PREFIX;
+
+const request = new RequestClient({
+  baseURL: `${apiHost}${apiPrefix}`,
+  interceptors: {
+    request: {
+      onFulfilled: (config) => {
+        config.headers = {
+            ...config.headers,
+            'Authorization': `Bearer ${storage.get('accessToken')}`,
+          };
+        return config;
+      },
+    },
+  }
+});
+
+export { request };
+
+export default request;
