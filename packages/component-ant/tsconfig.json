@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    /* 基础配置 */
+    "target": "es2020",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "lib": [
+      "es2020",
+      "dom",
+      "dom.iterable"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "useUnknownInCatchVariables": true,
+    /* 输出配置 - 启用声明文件生成 */
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    /* 项目配置 */
+    "composite": false,
+    "incremental": false
+  },
+  "include": [
+    "src/index.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "examples",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

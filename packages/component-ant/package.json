@@ -1,0 +1,42 @@
+{
+  "name": "@baiun/component-ant",
+  "version": "0.0.1",
+  "description": "基于 Ant Design 的 UI 组件库",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist",
+    "src",
+    "examples",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ui",
+    "component",
+    "antd",
+    "react"
+  ],
+  "author": "baiyun",
+  "license": "MIT",
+  "packageManager": "pnpm@10.14.0",
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.1.15",
+    "@types/react-dom": "^19.1.9",
+    "antd": "^6.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "antd": "^6.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}

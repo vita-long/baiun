@@ -6,6 +6,8 @@ import { AppstoreOutlined, ShoppingOutlined, DatabaseOutlined } from '@ant-desig
 import Layout from '@/components/Layout';
 import styles from './index.module.less';
 
+import { Button } from '@baiun/component-ant';
+
 const Dashboard: React.FC = () => {
   // 首页统计数据
   const statistics = [
@@ -37,6 +39,7 @@ const Dashboard: React.FC = () => {
       <div className={styles.contentWrapper}>
         <div className={styles.contentHeader}>
           <h2>欢迎使用鲜花管理系统</h2>
+          <Button type="primary">测试</Button>
         </div>
 
         {/* 统计卡片区域 */}
