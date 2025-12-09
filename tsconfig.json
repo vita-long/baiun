@@ -1,0 +1,135 @@
+{
+  "include": [
+    "packages/*",
+    "apps/*",
+    "shared/*",
+    "components/*"
+  ],
+  "compileOnSave": true,
+  "compilerOptions": {
+    /* 访问 https://aka.ms/tsconfig 了解更多关于此文件的信息 */
+    /* 项目配置 - monorepo 推荐启用 */
+    "incremental": true, /* 保存 .tsbuildinfo 文件以支持项目的增量编译，显著提升大型 monorepo 的编译速度。 */
+    "composite": true, /* 启用约束，使 TypeScript 项目可以与项目引用一起使用，这是 monorepo 结构的核心配置。 */
+    "tsBuildInfoFile": "./.tsbuildinfo", /* 指定 .tsbuildinfo 增量编译文件的路径。 */
+    // "disableSourceOfProjectReferenceRedirect": true,  /* 在引用复合项目时，禁用优先使用源文件而不是声明文件。 */
+    // "disableSolutionSearching": true,                 /* 在编辑时选择不参与多项目引用检查。 */
+    // "disableReferencedProjectLoad": true,             /* 减少 TypeScript 自动加载的项目数量。 */
+    /* 语言和环境 */
+    /* 基本配置 */
+    "target": "es2020", /* 提升目标JavaScript版本，支持更多现代特性，对于monorepo中的库更友好。 */
+    // "lib": ["es2020", "DOM"],                       /* 可以根据需要添加特定的运行时库。 */
+    // "jsx": "preserve",                                /* 指定生成的 JSX 代码类型。 */
+    // "libReplacement": true,                           /* 启用库替换功能。 */
+    // "experimentalDecorators": true,                   /* 启用对传统实验性装饰器的实验性支持。 */
+    // "emitDecoratorMetadata": true,                    /* 为源文件中的装饰声明发出设计类型元数据。 */
+    // "jsxFactory": "",                                 /* 指定针对 React JSX 发出时使用的 JSX 工厂函数，例如 'React.createElement' 或 'h'。 */
+    // "jsxFragmentFactory": "",                         /* 指定针对 React JSX 发出时用于片段的 JSX Fragment 引用，例如 'React.Fragment' 或 'Fragment'。 */
+    // "jsxImportSource": "",                            /* 指定使用 'jsx: react-jsx*' 时用于导入 JSX 工厂函数的模块说明符。 */
+    // "reactNamespace": "",                             /* 指定调用 'createElement' 的对象。仅适用于以 'react' JSX 为目标的情况。 */
+    // "noLib": true,                                    /* 禁用包含任何库文件，包括默认的 lib.d.ts。 */
+    "useDefineForClassFields": true, /* 发出符合 ECMAScript 标准的类字段，保持代码的一致性。 */
+    "moduleDetection": "auto", /* 控制用于检测模块格式 JS 文件的方法，自动检测对 monorepo 更友好。 */
+    /* 模块配置 - monorepo 推荐启用 */
+    "module": "esnext", /* 使用ES模块格式，更适合现代前端开发和构建工具。 */
+    // "rootDir": "./",                                  /* 指定源文件中的根文件夹。 */
+    "moduleResolution": "node10", /* 指定 TypeScript 如何从给定的模块说明符查找文件，使用现代的 node10 解析策略。 */
+    "baseUrl": "./", /* 指定解析非相对模块名称的基础目录，便于在 monorepo 中跨包导入。 */
+    "paths": {
+      "@baiun/*": [
+        "packages/*/src"
+      ], /* 配置路径别名，简化跨包导入，如导入@baiun/utils而不是../../packages/utils/src */
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@scripts/*": [
+        "scripts/*"
+      ]
+    }, /* 指定一组条目，用于将导入重新映射到其他查找位置，可以配置为简化跨包导入。 */
+    // "rootDirs": [],                                   /* 允许在解析模块时将多个文件夹视为一个。 */
+    // "typeRoots": [],                                  /* 指定多个文件夹，其作用类似于 './node_modules/@types'。 */
+    // "types": [],                                      /* 指定要包含的类型包名称，无需在源文件中引用。 */
+    // "allowUmdGlobalAccess": true,                     /* 允许从模块访问 UMD 全局变量。 */
+    // "moduleSuffixes": [],                             /* 解析模块时要搜索的文件名字后缀列表。 */
+    // "allowImportingTsExtensions": true,               /* 允许导入包含 TypeScript 文件扩展名。需要设置 '--moduleResolution bundler' 和 '--noEmit' 或 '--emitDeclarationOnly'。 */
+    // "rewriteRelativeImportExtensions": true,          /* 在输出文件中将相对导入路径中的 '.ts'、'.tsx'、'.mts' 和 '.cts' 文件扩展名重写为等效的 JavaScript 扩展名。 */
+    "resolvePackageJsonExports": false, /* 解析包导入时使用 package.json 的 'exports' 字段，支持现代包导出规范。 */
+    "resolvePackageJsonImports": false, /* 解析导入时使用 package.json 的 'imports' 字段，支持现代包导入规范。 */
+    // "customConditions": [],                           /* 解析导入时除解析器特定的默认值外设置的条件。 */
+    // "noUncheckedSideEffectImports": true,             /* 检查副作用导入。 */
+    "resolveJsonModule": true, /* 启用导入 .json 文件，在配置文件较多的 monorepo 中很有用。 */
+    // "allowArbitraryExtensions": true,                 /* 允许导入任何扩展名的文件，前提是存在声明文件。 */
+    // "noResolve": true,                                /* 禁止 'import'、'require' 或 '<reference>' 扩展 TypeScript 应添加到项目中的文件数量。 */
+    /* JavaScript 支持 */
+    // "allowJs": true,                                  /* 允许 JavaScript 文件成为程序的一部分。使用 'checkJS' 选项获取这些文件的错误。 */
+    // "checkJs": true,                                  /* 启用对类型检查的 JavaScript 文件的错误报告。 */
+    // "maxNodeModuleJsDepth": 1,                        /* 指定用于检查 'node_modules' 中 JavaScript 文件的最大文件夹深度。仅适用于启用 'allowJs' 的情况。 */
+    /* 输出配置 - monorepo 推荐启用 */
+    "declaration": true, /* 从项目中的 TypeScript 和 JavaScript 文件生成 .d.ts 文件，对于库包之间的类型共享至关重要。 */
+    "declarationMap": true, /* 为 d.ts 文件创建源映射，便于在 monorepo 中调试类型定义。 */
+    // "emitDeclarationOnly": true,                      /* 仅输出 d.ts 文件而不输出 JavaScript 文件。 */
+    "sourceMap": true, /* 为生成的 JavaScript 文件创建源映射文件，便于调试。 */
+    // "inlineSourceMap": true,                          /* 在生成的 JavaScript 中包含源映射文件。 */
+    // "noEmit": true,                                   /* 禁用从编译中发出文件。 */
+    // "outFile": "./",                                  /* 指定一个将所有输出捆绑到一个 JavaScript 文件的文件。如果 'declaration' 为 true，也指定一个捆绑所有 .d.ts 输出的文件。 */
+    "outDir": "./dist", /* 指定所有生成文件的输出文件夹，保持项目结构整洁。 */
+    // "removeComments": true,                           /* 禁用发出注释。 */
+    "importHelpers": true, /* 允许从 tslib 导入助手函数一次，而不是每个文件都包含它们，减少代码重复。 */
+    // "downlevelIteration": true,                       /* 发出更兼容但更冗长、性能更低的 JavaScript 迭代代码。 */
+    // "sourceRoot": "",                                 /* 指定调试器查找参考源代码的根路径。 */
+    // "mapRoot": "",                                    /* 指定调试器应查找映射文件的位置，而不是生成的位置。 */
+    // "inlineSources": true,                            /* 在生成的 JavaScript 中的源映射中包含源代码。 */
+    // "emitBOM": true,                                  /* 在输出文件的开头发出 UTF-8 字节顺序标记 (BOM)。 */
+    // "newLine": "crlf",                                /* 设置用于发出文件的换行符。 */
+    // "stripInternal": true,                            /* 禁用发出在 JSDoc 注释中包含 '@internal' 的声明。 */
+    // "noEmitHelpers": true,                            /* 禁用在编译输出中生成像 '__extends' 这样的自定义助手函数。 */
+    "noEmitOnError": true, /* 如果报告任何类型检查错误，则禁用发出文件，确保生产代码的质量。 */
+    // "preserveConstEnums": true,                       /* 禁用在生成的代码中删除 'const enum' 声明。 */
+    // "declarationDir": "./",                           /* 指定生成的声明文件的输出目录。 */
+    /* 互操作性约束 - monorepo 推荐启用 */
+    "isolatedModules": true, /* 确保每个文件都可以安全地转译，而无需依赖其他导入，对现代构建工具（如 Vite、webpack）友好。 */
+    "verbatimModuleSyntax": true, /* 不转换或省略任何未标记为仅类型的导入或导出，确保它们根据 'module' 设置以输出文件的格式编写，提高一致性。 */
+    // "isolatedDeclarations": true,                     /* 要求对导出进行足够的注释，以便其他工具可以轻松生成声明文件。 */
+    // "erasableSyntaxOnly": true,                       /* 不允许使用不属于 ECMAScript 的运行时构造。 */
+    // "allowSyntheticDefaultImports": true,             /* 当模块没有默认导出时，允许 'import x from y'。 */
+    "esModuleInterop": true, /* 发出额外的 JavaScript 以简化对 CommonJS 模块的导入支持。这会启用 'allowSyntheticDefaultImports' 以实现类型兼容性。 */
+    // "preserveSymlinks": true,                         /* 禁用将符号链接解析为其实际路径。这与 node 中的相同标志相关。 */
+    "forceConsistentCasingInFileNames": true, /* 确保导入中的大小写正确。 */
+    /* 类型检查 */
+    "strict": true, /* 启用所有严格的类型检查选项。 */
+    // "noImplicitAny": true,                            /* 对具有隐含 'any' 类型的表达式和声明启用错误报告。 */
+    // "strictNullChecks": true,                         /* 类型检查时，考虑 'null' 和 'undefined'。 */
+    // "strictFunctionTypes": true,                      /* 分配函数时，检查确保参数和返回值是子类型兼容的。 */
+    // "strictBindCallApply": true,                      /* 检查 'bind'、'call' 和 'apply' 方法的参数是否与原始函数匹配。 */
+    // "strictPropertyInitialization": true,             /* 检查已声明但未在构造函数中设置的类属性。 */
+    // "strictBuiltinIteratorReturn": true,              /* 内置迭代器以 'undefined' 而不是 'any' 的 'TReturn' 类型实例化。 */
+    // "noImplicitThis": true,                           /* 当 'this' 被赋予 'any' 类型时启用错误报告。 */
+    "useUnknownInCatchVariables": true, /* 默认将 catch 子句变量视为 'unknown' 而不是 'any'，提高类型安全性。 */
+    // "alwaysStrict": true,                             /* 确保始终发出 'use strict'。 */
+    "noUnusedLocals": true, /* 当局部变量未被读取时启用错误报告，保持代码整洁。 */
+    "noUnusedParameters": true, /* 当函数参数未被读取时引发错误，保持代码整洁。 */
+    // "exactOptionalPropertyTypes": true,               /* 按原样解释可选属性类型，而不是添加 'undefined'。 */
+    // "noImplicitReturns": true,                        /* 对未在函数中明确返回的代码路径启用错误报告。 */
+    // "noFallthroughCasesInSwitch": true,               /* 对 switch 语句中的贯穿情况启用错误报告。 */
+    // "noUncheckedIndexedAccess": true,                 /* 使用索引访问类型时添加 'undefined'。 */
+    // "noImplicitOverride": true,                       /* 确保派生类中的重写成员标记有 override 修饰符。 */
+    // "noPropertyAccessFromIndexSignature": true,       /* 强制对使用索引类型声明的键使用索引访问器。 */
+    // "allowUnusedLabels": true,                        /* 禁用对未使用标签的错误报告。 */
+    // "allowUnreachableCode": true,                     /* 禁用对不可达代码的错误报告。 */
+    /* 完整性 */
+    // "skipDefaultLibCheck": true,                      /* 跳过对 TypeScript 包含的 .d.ts 文件的类型检查。 */
+    "skipLibCheck": true /* 跳过对所有 .d.ts 文件的类型检查。 */
+  },
+  /* monorepo 项目引用配置 */
+  "references": [
+    {
+      "path": "./packages/utils"
+    } /* 添加项目引用，指定monorepo中的子项目依赖关系，提升编译性能和类型检查精度 */
+    // 随着项目增长，可以添加更多的引用，如: 
+    // { "path": "./apps/app1" },
+    // { "path": "./components/ui" }
+  ]
+}
