@@ -27,5 +27,7 @@ const request = new RequestClient({
 });
 
 export { request };
-
 export default request;
+export * from './category';
+export * from './product';
+export * from './order';

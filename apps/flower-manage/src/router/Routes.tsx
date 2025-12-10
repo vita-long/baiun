@@ -9,19 +9,23 @@ export interface RouteConfig {
 }
 
 // 主路由配置
-  const mainRoutes: RouteConfig[] = [
-    {
-      path: '/',
-      element: lazy(() => import('@/pages/Dashboard')),
-    },
-    {
-      path: '/categories',
-      element: lazy(() => import('@/pages/Categories')),
-    },
-    {
-      path: '/products',
-      element: lazy(() => import('@/pages/Products')),
-    },
+const mainRoutes: RouteConfig[] = [
+  {
+    path: '/',
+    element: lazy(() => import('@/pages/Dashboard')),
+  },
+  {
+    path: '/categories',
+    element: lazy(() => import('@/pages/Categories')),
+  },
+  {
+    path: '/products',
+    element: lazy(() => import('@/pages/Products')),
+  },
+  {
+    path: '/orders',
+    element: lazy(() => import('@/pages/Order')),
+  },
   {
     path: '/login',
     element: lazy(() => import('@/pages/auth/LoginPage')),
