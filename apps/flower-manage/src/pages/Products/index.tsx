@@ -5,7 +5,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, InboxOutlined } from '@ant-
 import { getCategories } from '@/service/category';
 import type { UploadProps } from 'antd';
 import type { Product } from '@/types/product';
-import type { Category } from '@/types/category';
 import Layout from '@/components/Layout';
 import styles from './index.module.less';
 import { createProduct, deleteProduct, getProducts, updateProduct, uploadImage } from '@/service/product';
@@ -15,8 +14,8 @@ const Products: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form] = Form.useForm();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [page] = useState(1);
+  const [pageSize] = useState(10);
 
   const { data: categories } = useRequest(getCategories);
   const { data: products, run: fetchProduct, loading } = useRequest(() => getProducts({
