@@ -31,6 +31,10 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/PaymentMethod')),
   },
   {
+    path: '/stock-management',
+    element: lazy(() => import('@/pages/StockManagement')),
+  },
+  {
     path: '/login',
     element: lazy(() => import('@/pages/auth/LoginPage')),
   },

@@ -12,6 +12,9 @@ export interface Product {
   category?: Category;
   isActive: boolean;
   description?: string;
+  price: number;
+  stock: number;
+  sales: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,4 +36,12 @@ export interface ProductUpdateRequest {
   categoryId: string;
   isActive: boolean;
   description?: string;
+}
+
+// 商品列表响应
+export interface ProductListResponse {
+  list: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
 }

@@ -11,8 +11,8 @@ const PaymentMethod: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
   const [form] = Form.useForm();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [page] = useState(1);
+  const [pageSize] = useState(10);
 
   const { data: paymentMethods, run: fetchPaymentMethod, loading } = useRequest(() => getPaymentMethods({
     page,
