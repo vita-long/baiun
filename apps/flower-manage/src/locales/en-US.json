@@ -1,0 +1,92 @@
+{
+  "common": {
+    "hello": "Hello",
+    "welcome": "Welcome",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "operation": "Operation",
+    "success": "Operation successful",
+    "error": "Operation failed",
+    "loading": "Loading...",
+    "language": "Language"
+  },
+  "menu": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "categories": "Categories",
+    "products": "Products",
+    "orders": "Orders",
+    "paymentMethods": "Payment Methods",
+    "stockManagement": "Stock Management"
+  },
+  "dashboard": {
+    "title": "Welcome to Flower Management System",
+    "categories": "Number of Categories",
+    "products": "Number of Products",
+    "data": "Total Data",
+    "test": "Test",
+    "viewDetails": "View Details",
+    "quickActions": "Quick Actions",
+    "quickActionsDescription": "Quick entry for common operations"
+  },
+  "categories": {
+    "title": "Category Management",
+    "categoryName": "Category Name",
+    "description": "Description",
+    "parentCategory": "Parent Category",
+    "status": "Status",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "deleteConfirm": "Are you sure you want to delete this category?"
+  },
+  "products": {
+    "title": "Product Management",
+    "productId": "Product ID",
+    "productName": "Product Name",
+    "category": "Category",
+    "price": "Price",
+    "stock": "Stock",
+    "sales": "Sales",
+    "status": "Status",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "deleteConfirm": "Are you sure you want to delete this product?"
+  },
+  "paymentMethod": {
+    "title": "Payment Method Management",
+    "methodName": "Payment Method Name",
+    "description": "Description",
+    "status": "Status",
+    "addPaymentMethod": "Add Payment Method",
+    "editPaymentMethod": "Edit Payment Method",
+    "deleteConfirm": "Are you sure you want to delete this payment method?"
+  },
+  "stock": {
+    "title": "Stock Management",
+    "productStockList": "Product Stock List",
+    "currentStock": "Current Stock",
+    "adjustStock": "Adjust Stock",
+    "stockHistory": "Stock History",
+    "lowStock": "Low Stock",
+    "lowStockWarning": "Low Stock Warning",
+    "adjustQuantity": "Adjust Quantity",
+    "adjustType": "Adjust Type",
+    "operator": "Operator",
+    "remark": "Remark",
+    "confirmAdjust": "Confirm Adjustment",
+    "adjustTime": "Adjust Time",
+    "beforeStock": "Before Stock",
+    "afterStock": "After Stock",
+    "changeQuantity": "Change Quantity",
+    "purchase": "Purchase In",
+    "sale": "Sale Out",
+    "adjustment": "Stock Adjustment"
+  }
+}
