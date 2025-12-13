@@ -33,6 +33,8 @@ const StockManagement: React.FC = () => {
     }
   };
 
+
+
   // 获取低库存产品
   const fetchLowStockProducts = async () => {
     try {
@@ -166,9 +168,7 @@ const StockManagement: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (products.length > 0) {
-      // fetchLowStockProducts();
-    }
+    fetchLowStockProducts();
   }, [products]);
 
   return (

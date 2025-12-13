@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout as AntLayout, Select, Button, Flex } from 'antd';
+import { Layout as AntLayout, Select, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 import SideMenu from '@/components/SideMenu';
 import styles from './index.module.less';
@@ -12,7 +12,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   // 语言切换处理函数
   const handleLanguageChange = (value: string) => {

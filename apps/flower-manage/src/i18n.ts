@@ -4,8 +4,8 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 
 // 导入翻译资源
-import zhCN from './locales/zh-CN.json';
-import enUS from './locales/en-US.json';
+import zhCN from '../scripts/files/zh-CN.json';
+import enUS from '../scripts/files/en-US.json';
 
 // 配置i18next
 const i18nConfig = {
