@@ -3,9 +3,81 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import https from 'https';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/**
+ * 百度翻译API调用函数
+ * @param {string} text 要翻译的中文文本
+ * @param {string} [appid=''] 百度翻译APP ID
+ * @param {string} [secretKey=''] 百度翻译密钥
+ * @returns {Promise<string>} 翻译后的英文文本
+ */
+async function translateText(text, appid = '', secretKey = '') {
+
+  // 真实百度翻译API调用逻辑
+  if (!appid || !secretKey) {
+    console.warn(`未提供百度翻译API凭证，使用默认翻译: ${text}`);
+    return text; // 如果没有提供凭证，直接返回原文本
+  }
+
+  try {
+    const salt = Date.now().toString();
+    const sign = crypto.createHash('md5').update(appid + text + salt + secretKey).digest('hex');
+    const params = new URLSearchParams({
+      q: text,
+      from: 'zh',
+      to: 'en',
+      appid: appid,
+      salt: salt,
+      sign: sign
+    });
+
+    const options = {
+      hostname: 'fanyi-api.baidu.com',
+      path: '/api/trans/vip/translate?' + params.toString(),
+      method: 'GET'
+    };
+
+    return new Promise((resolve, reject) => {
+      const req = https.request(options, (res) => {
+        let data = '';
+
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            const result = JSON.parse(data);
+            if (result.trans_result && result.trans_result.length > 0) {
+              resolve(result.trans_result[0].dst);
+            } else {
+              console.error('翻译API返回错误:', result.error_msg || '未知错误');
+              resolve(text);
+            }
+          } catch (error) {
+            console.error('解析翻译结果失败:', error);
+            resolve(text);
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        console.error('翻译请求失败:', error);
+        resolve(text);
+      });
+
+      req.end();
+    });
+  } catch (error) {
+    console.error('翻译过程中发生错误:', error);
+    return text;
+  }
+}
 
 /**
  * 解析命令行参数
@@ -162,9 +234,11 @@ function processChineseTexts(matches) {
  * @param {Object} enUSConfig 英文配置文件
  * @param {Object} zhCNConfig 中文配置文件
  * @param {Array<string>} pathParts 路径部分数组
+ * @param {string} [appid=''] 百度翻译APP ID
+ * @param {string} [secretKey=''] 百度翻译密钥
  */
-function updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts) {
-  filteredTexts.forEach((text, index) => {
+async function updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts, appid = '', secretKey = '') {
+  for (const [index, text] of filteredTexts.entries()) {
     const key = `index_${index}`;
     let currentObjEn = enUSConfig;
     let currentObjZh = zhCNConfig;
@@ -181,14 +255,16 @@ function updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts) {
       currentObjZh = currentObjZh[part];
     });
 
-    // 设置值
-    if (!currentObjEn[key]) {
-      currentObjEn[key] = '';
-    }
+    // 设置中文值
     if (!currentObjZh[key]) {
       currentObjZh[key] = text;
     }
-  });
+
+    // 设置英文值（如果为空则翻译）
+    if (!currentObjEn[key]) {
+      currentObjEn[key] = await translateText(text, appid, secretKey);
+    }
+  }
 }
 
 /**
@@ -293,7 +369,7 @@ function saveVersionHistory(outputDir, enUSConfig, zhCNConfig, enUSPath, zhCNPat
 /**
  * 主函数
  */
-function main() {
+async function main() {
   try {
     // 解析命令行参数
     const filePath = parseArgs();
@@ -320,8 +396,12 @@ function main() {
     // 处理中文文本
     const filteredTexts = processChineseTexts(matches);
 
+    // 获取百度翻译API凭证
+    const BAIDU_APP_ID = process.env.BAIDU_TRANSLATE_APP_ID || '';
+    const BAIDU_SECRET_KEY = process.env.BAIDU_TRANSLATE_SECRET_KEY || '';
+
     // 更新配置文件
-    updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts);
+    await updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts, BAIDU_APP_ID, BAIDU_SECRET_KEY);
 
     // 保存版本历史
     const versionDir = saveVersionHistory(outputDir, enUSConfig, zhCNConfig, enUSPath, zhCNPath);
@@ -333,6 +413,7 @@ function main() {
     console.log(`提取了 ${filteredTexts.length} 个中文文本`);
   } catch (error) {
     console.error('处理过程中发生错误:', error.message);
+    console.error(error.stack);
     process.exit(1);
   }
 }
