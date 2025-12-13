@@ -1,14 +1,14 @@
 {
   "pages": {
     "Dashboard": {
-      "index_0": "Number of product categories",
-      "index_1": "Total number of products",
-      "index_2": "total data volume",
-      "index_3": "Welcome to the Flower Management System",
-      "index_4": "test",
-      "index_5": "View details",
-      "index_6": "Quick Operation",
-      "index_7": "You can access various functions of the system, including category management and product management, through the left-hand menu. Please select the corresponding functional module as needed for operation."
+      "index_0": "Product Categories",
+      "index_1": "Total Products",
+      "index_2": "Data Volume",
+      "index_3": "Welcome to Flower Management System",
+      "index_4": "Test",
+      "index_5": "View Details",
+      "index_6": "Quick Actions",
+      "index_7": "You can access all system functions through the left menu, including category management and product management. Please select the appropriate function module according to your needs."
     }
   }
 }

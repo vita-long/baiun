@@ -7,26 +7,29 @@ import Layout from '@/components/Layout';
 import styles from './index.module.less';
 
 import { Button } from '@baiun/component-ant';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
+
   // 首页统计数据
   const statistics = [
     {
-      title: '商品分类数',
+      title: t('pages.Dashboard.index_0'),
       value: 15,
       icon: <AppstoreOutlined />,
       color: '#1890ff',
       link: '/categories',
     },
     {
-      title: '商品总数',
+      title: t('pages.Dashboard.index_1'),
       value: 280,
       icon: <ShoppingOutlined />,
       color: '#52c41a',
       link: '/products',
     },
     {
-      title: '数据总量',
+      title: t('pages.Dashboard.index_2'),
       value: '1.2GB',
       icon: <DatabaseOutlined />,
       color: '#faad14',
@@ -38,8 +41,8 @@ const Dashboard: React.FC = () => {
     <Layout>
       <div className={styles.contentWrapper}>
         <div className={styles.contentHeader}>
-          <h2>欢迎使用鲜花管理系统</h2>
-          <Button type="primary">测试</Button>
+          <h2>{t('pages.Dashboard.index_3')}</h2>
+          <Button type="primary">{t('pages.Dashboard.index_4')}</Button>
         </div>
 
         {/* 统计卡片区域 */}
@@ -61,9 +64,7 @@ const Dashboard: React.FC = () => {
                   }}
                 />
                 {stat.link && (
-                  <Link to={stat.link} style={{ display: 'block', marginTop: 8, color: stat.color }}>
-                    查看详情 →
-                  </Link>
+                  <Link to={stat.link} style={{ display: 'block', marginTop: 8, color: stat.color }}>{t('pages.Dashboard.index_5')}</Link>
                 )}
               </Card>
             </Col>
@@ -71,11 +72,8 @@ const Dashboard: React.FC = () => {
         </Row>
 
         {/* 快速操作区域 */}
-        <Card title="快速操作" className={styles.quickActions}>
-          <p style={{ textAlign: 'center', lineHeight: 2 }}>
-            您可以通过左侧菜单访问系统的各项功能，包括分类管理和商品管理。
-            请根据需要选择相应的功能模块进行操作。
-          </p>
+        <Card title={t('pages.Dashboard.index_6')} className={styles.quickActions}>
+          <p style={{ textAlign: 'center', lineHeight: 2 }}>{t('pages.Dashboard.index_7')}</p>
         </Card>
       </div>
     </Layout>

@@ -3,13 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { translateText, getTranslationApiCallCount } from './translate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
-
 
 /**
  * 解析命令行参数
@@ -32,26 +28,32 @@ function parseArgs() {
 }
 
 /**
+ * 确保输出目录存在
+ * @param {string} outputDir 输出目录
+ */
+function ensureOutputDir(outputDir) {
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+}
+
+// 移除了版本号管理逻辑
+
+/**
  * 初始化配置文件
  * @param {string} outputDir 输出目录
  * @returns {Object} 配置文件对象
  */
 function initializeConfigs(outputDir) {
-  const enUSPath = path.join(outputDir, 'en-US.json');
   const zhCNPath = path.join(outputDir, 'zh-CN.json');
 
-  let enUSConfig = {};
   let zhCNConfig = {};
-
-  if (fs.existsSync(enUSPath)) {
-    enUSConfig = JSON.parse(fs.readFileSync(enUSPath, 'utf8'));
-  }
 
   if (fs.existsSync(zhCNPath)) {
     zhCNConfig = JSON.parse(fs.readFileSync(zhCNPath, 'utf8'));
   }
 
-  return { enUSConfig, zhCNConfig, enUSPath, zhCNPath };
+  return { zhCNConfig, zhCNPath };
 }
 
 /**
@@ -161,29 +163,21 @@ function processChineseTexts(matches) {
 }
 
 /**
- * 更新配置文件
+ * 更新中文配置文件
  * @param {Array<string>} filteredTexts 处理后的中文文本数组
- * @param {Object} enUSConfig 英文配置文件
  * @param {Object} zhCNConfig 中文配置文件
  * @param {Array<string>} pathParts 路径部分数组
- * @param {string} [appid=''] 百度翻译APP ID
- * @param {string} [secretKey=''] 百度翻译密钥
  */
-async function updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts, appid = '', secretKey = '') {
+function updateConfigFiles(filteredTexts, zhCNConfig, pathParts) {
   for (const [index, text] of filteredTexts.entries()) {
     const key = `index_${index}`;
-    let currentObjEn = enUSConfig;
     let currentObjZh = zhCNConfig;
 
     // 创建嵌套结构
     pathParts.forEach(part => {
-      if (!currentObjEn[part]) {
-        currentObjEn[part] = {};
-      }
       if (!currentObjZh[part]) {
         currentObjZh[part] = {};
       }
-      currentObjEn = currentObjEn[part];
       currentObjZh = currentObjZh[part];
     });
 
@@ -191,111 +185,19 @@ async function updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathPart
     if (!currentObjZh[key]) {
       currentObjZh[key] = text;
     }
-
-    // 设置英文值（如果为空则翻译）
-    if (!currentObjEn[key]) {
-      currentObjEn[key] = await translateText(text, appid, secretKey);
-    }
   }
 }
 
-/**
- * 生成差异文件
- * @param {Object} oldObj 旧对象
- * @param {Object} newObj 新对象
- * @param {Object} diffObj 差异对象
- * @param {Array<string>} path 路径数组
- */
-function detectDiff(oldObj, newObj, diffObj, path = []) {
-  const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
-  
-  for (const key of keys) {
-    const newPath = [...path, key];
-    const oldValue = oldObj[key];
-    const newValue = newObj[key];
-
-    if (typeof oldValue === 'object' && oldValue !== null && 
-        typeof newValue === 'object' && newValue !== null) {
-      const nestedDiff = {};
-      detectDiff(oldValue, newValue, nestedDiff, newPath);
-      
-      if (Object.keys(nestedDiff).length > 0) {
-        let current = diffObj;
-        for (let i = 0; i < newPath.length - 1; i++) {
-          if (!current[newPath[i]]) {
-            current[newPath[i]] = {};
-          }
-          current = current[newPath[i]];
-        }
-        current[newPath[newPath.length - 1]] = nestedDiff;
-      }
-    } else if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
-      let current = diffObj;
-      for (let i = 0; i < newPath.length - 1; i++) {
-        if (!current[newPath[i]]) {
-          current[newPath[i]] = {};
-        }
-        current = current[newPath[i]];
-      }
-      current[newPath[newPath.length - 1]] = newValue;
-    }
-  }
-}
+// 移除了差异文件生成逻辑
 
 /**
- * 保存版本历史
- * @param {string} outputDir 输出目录
- * @param {Object} enUSConfig 英文配置文件
+ * 保存最终的中文配置文件
  * @param {Object} zhCNConfig 中文配置文件
- * @param {string} enUSPath 英文配置文件路径
  * @param {string} zhCNPath 中文配置文件路径
- * @returns {string} 版本目录路径
  */
-function saveVersionHistory(outputDir, enUSConfig, zhCNConfig, enUSPath, zhCNPath) {
-  // 保存版本历史 - 使用递增的数字索引
-  let versionIndex = 1;
-
-  // 列出现有版本目录
-  if (fs.existsSync(outputDir)) {
-    const files = fs.readdirSync(outputDir);
-    const versionDirs = files.filter(file => {
-      const filePath = path.join(outputDir, file);
-      return fs.statSync(filePath).isDirectory() && /^\d+$/.test(file);
-    });
-
-    if (versionDirs.length > 0) {
-      versionIndex = Math.max(...versionDirs.map(dir => parseInt(dir, 10))) + 1;
-    }
-  }
-
-  const versionDir = path.join(outputDir, versionIndex.toString());
-  fs.mkdirSync(versionDir, { recursive: true });
-
-  // 保存旧文件
-  fs.writeFileSync(path.join(versionDir, 'en-US-old.json'), JSON.stringify(enUSConfig, null, 2), 'utf8');
-  fs.writeFileSync(path.join(versionDir, 'zh-CN-old.json'), JSON.stringify(zhCNConfig, null, 2), 'utf8');
-
-  // 保存新文件
-  fs.writeFileSync(enUSPath, JSON.stringify(enUSConfig, null, 2), 'utf8');
+function saveFinalConfig(zhCNConfig, zhCNPath) {
+  // 只保存最终的中文配置文件
   fs.writeFileSync(zhCNPath, JSON.stringify(zhCNConfig, null, 2), 'utf8');
-
-  // 保存新文件到版本目录
-  fs.writeFileSync(path.join(versionDir, 'en-US.json'), JSON.stringify(enUSConfig, null, 2), 'utf8');
-  fs.writeFileSync(path.join(versionDir, 'zh-CN.json'), JSON.stringify(zhCNConfig, null, 2), 'utf8');
-
-  // 生成差异文件
-  const diffEnUS = {};
-  const diffZhCN = {};
-
-  detectDiff(JSON.parse(fs.readFileSync(path.join(versionDir, 'en-US-old.json'), 'utf8')), 
-             enUSConfig, diffEnUS);
-  detectDiff(JSON.parse(fs.readFileSync(path.join(versionDir, 'zh-CN-old.json'), 'utf8')), 
-             zhCNConfig, diffZhCN);
-
-  fs.writeFileSync(path.join(versionDir, 'diff-en-US.json'), JSON.stringify(diffEnUS, null, 2), 'utf8');
-  fs.writeFileSync(path.join(versionDir, 'diff-zh-CN.json'), JSON.stringify(diffZhCN, null, 2), 'utf8');
-
-  return versionDir;
 }
 
 /**
@@ -308,12 +210,14 @@ async function main() {
 
     // 确保输出目录存在
     const outputDir = path.join(__dirname, 'files');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+    ensureOutputDir(outputDir);
 
     // 初始化配置文件
-    const { enUSConfig, zhCNConfig, enUSPath, zhCNPath } = initializeConfigs(outputDir);
+    const zhCNPath = path.join(outputDir, 'zh-CN.json');
+    let zhCNConfig = {};
+    if (fs.existsSync(zhCNPath)) {
+      zhCNConfig = JSON.parse(fs.readFileSync(zhCNPath, 'utf8'));
+    }
 
     // 读取目标文件内容并移除注释
     let fileContent = fs.readFileSync(filePath, 'utf8');
@@ -328,22 +232,16 @@ async function main() {
     // 处理中文文本
     const filteredTexts = processChineseTexts(matches);
 
-    // 获取百度翻译API凭证
-    const BAIDU_APP_ID = process.env.BAIDU_TRANSLATE_APP_ID || '20251213002518274';
-    const BAIDU_SECRET_KEY = process.env.BAIDU_TRANSLATE_SECRET_KEY || '1jQAXErJPQCAdyRIfsLl';
-
     // 更新配置文件
-    await updateConfigFiles(filteredTexts, enUSConfig, zhCNConfig, pathParts, BAIDU_APP_ID, BAIDU_SECRET_KEY);
+    updateConfigFiles(filteredTexts, zhCNConfig, pathParts);
 
-    // 保存版本历史
-    const versionDir = saveVersionHistory(outputDir, enUSConfig, zhCNConfig, enUSPath, zhCNPath);
+    // 保存最终配置文件
+    saveFinalConfig(zhCNConfig, zhCNPath);
 
     // 输出结果
     console.log(`成功处理文件: ${filePath}`);
-    console.log(`生成的配置文件位于: ${outputDir}`);
-    console.log(`版本历史记录位于: ${versionDir}`);
+    console.log(`生成的中文配置文件位于: ${zhCNPath}`);
     console.log(`提取了 ${filteredTexts.length} 个中文文本`);
-    console.log(`翻译API调用次数: ${getTranslationApiCallCount()}`);
   } catch (error) {
     console.error('处理过程中发生错误:', error.message);
     console.error(error.stack);
