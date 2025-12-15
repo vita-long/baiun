@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
-import { AppstoreOutlined, ShoppingOutlined, DatabaseOutlined, FileTextOutlined, CreditCardOutlined, DatabaseOutlined as InventoryOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, ShoppingOutlined, DatabaseOutlined, FileTextOutlined, CreditCardOutlined, DatabaseOutlined as InventoryOutlined, UserOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 
 const SideMenu: React.FC = () => {
@@ -38,6 +38,11 @@ const SideMenu: React.FC = () => {
       key: '/stock-management',
       label: <Link to="/stock-management">库存管理</Link>,
       icon: <InventoryOutlined />,
+    },
+    {
+      key: '/members',
+      label: <Link to="/members">会员管理</Link>,
+      icon: <UserOutlined />,
     },
   ];
 

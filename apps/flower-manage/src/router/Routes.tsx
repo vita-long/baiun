@@ -35,6 +35,10 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/StockManagement')),
   },
   {
+    path: '/members',
+    element: lazy(() => import('@/pages/Members')),
+  },
+  {
     path: '/login',
     element: lazy(() => import('@/pages/auth/LoginPage')),
   },
