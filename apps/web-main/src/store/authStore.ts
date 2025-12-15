@@ -16,7 +16,7 @@ class AuthStore {
   error: string | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
     // 初始化时检查是否有token
     this.checkAuthStatus();
   }
