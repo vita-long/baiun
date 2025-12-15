@@ -33,20 +33,6 @@ const StockManagement: React.FC = () => {
     }
   };
 
-
-
-  // 获取低库存产品
-  const fetchLowStockProducts = async () => {
-    try {
-      const response = await getLowStockProducts({ threshold: 10 });
-      const lowStockIds = new Set(response.list.map(item => item.productId));
-      const lowStock = products.filter(product => lowStockIds.has(product.productId));
-      setLowStockProducts(lowStock);
-    } catch (error) {
-      message.error('获取低库存产品失败');
-    }
-  };
-
   // 获取库存历史记录
   const fetchStockHistory = async (productId: string) => {
     try {
@@ -80,7 +66,6 @@ const StockManagement: React.FC = () => {
       message.success('库存调整成功');
       setAdjustModalVisible(false);
       fetchProducts();
-      // fetchLowStockProducts();
     } catch (error) {
       message.error('库存调整失败');
     }
@@ -102,18 +87,20 @@ const StockManagement: React.FC = () => {
       title: '产品ID',
       dataIndex: 'productId',
       key: 'productId',
-      width: 120,
+      width: 220,
     },
     {
       title: '产品名称',
       dataIndex: 'name',
       key: 'name',
       ellipsis: true,
+      width: 400,
     },
     {
       title: '当前库存',
       dataIndex: 'stock',
       key: 'stock',
+      width: 200,
       render: (stock: number, record: Product) => {
         const isLowStock = lowStockProducts.some(item => item.productId === record.productId);
         return (
@@ -125,15 +112,9 @@ const StockManagement: React.FC = () => {
       },
     },
     {
-      title: '销量',
-      dataIndex: 'sales',
-      key: 'sales',
-      width: 100,
-    },
-    {
       title: '价格',
-      dataIndex: 'price',
-      key: 'price',
+      dataIndex: 'basePrice',
+      key: 'basePrice',
       render: (price: number) => price ? `¥${price}` : 0,
       width: 100,
     },
@@ -166,10 +147,6 @@ const StockManagement: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  useEffect(() => {
-    fetchLowStockProducts();
-  }, [products]);
 
   return (
     <Layout>

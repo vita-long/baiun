@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRequest } from 'ahooks';
-import { Button, Table, Modal, Form, Input, Upload, Select, Switch, message, Space } from 'antd';
+import { Button, Table, Modal, Form, Input, Upload, Select, Switch, message, Space, InputNumber } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 import { getCategories } from '@/service/category';
 import type { UploadProps } from 'antd';
@@ -258,6 +258,12 @@ const Products: React.FC = () => {
       render: (_: any, record: Product) => record?.category?.categoryName || '',
     },
     {
+      title: '基础价格',
+      dataIndex: 'basePrice',
+      key: 'basePrice',
+      render: (basePrice: number) => `¥${basePrice}`,
+    },
+    {
       title: '是否上架',
       dataIndex: 'isActive',
       key: 'isActive',
@@ -382,6 +388,14 @@ const Products: React.FC = () => {
                 </Select.Option>
               ))}
             </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="basePrice"
+            label="基础价格"
+            rules={[{ required: true, message: '请输入基础价格' }]}
+          >
+            <InputNumber style={{ width: '200px' }} placeholder="请输入基础价格" />
           </Form.Item>
 
           <Form.Item

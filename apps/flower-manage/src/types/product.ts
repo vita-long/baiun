@@ -12,6 +12,7 @@ export interface Product {
   category?: Category;
   isActive: boolean;
   description?: string;
+  basePrice: number;
   price: number;
   stock: number;
   sales: number;
@@ -25,6 +26,7 @@ export interface ProductCreateRequest {
   mainImage: string;
   images: string[];
   categoryId: string;
+  basePrice: number;
   isActive: boolean;
   description?: string;
 }
@@ -34,6 +36,7 @@ export interface ProductUpdateRequest {
   mainImage: string;
   images: string[];
   categoryId: string;
+  basePrice: number;
   isActive: boolean;
   description?: string;
 }
