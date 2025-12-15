@@ -112,7 +112,7 @@ export interface MemberSubscription {
 
 // 分页响应接口
 export interface PaginationResponse<T> {
-  items: T[];
+  list: T[];
   total: number;
   page: number;
   limit: number;
@@ -187,7 +187,7 @@ export interface MemberListItem {
   username: string;
   email: string;
   phone: string;
-  currentLevel: string;
+  currentLevel: MemberLevel;
   points: number;
   growthValue: number;
   joinDate: string;
@@ -195,52 +195,7 @@ export interface MemberListItem {
 }
 
 export const getMembers = (page: number = 1, limit: number = 10) => {
-  // 模拟数据，实际项目中应该调用后端API
-  // return request.get<PaginationResponse<MemberListItem>>('/member/list', {
-  //   params: { page, limit }
-  // });
-  
-  // 模拟数据
-  const mockMembers: MemberListItem[] = [
-    {
-      userId: 'user123',
-      username: '张三',
-      email: 'zhangsan@example.com',
-      phone: '13800138000',
-      currentLevel: '玫瑰会员',
-      points: 1200,
-      growthValue: 3500,
-      joinDate: '2023-05-10',
-      status: 'active'
-    },
-    {
-      userId: 'user124',
-      username: '李四',
-      email: 'lisi@example.com',
-      phone: '13900139000',
-      currentLevel: '百合会员',
-      points: 850,
-      growthValue: 2200,
-      joinDate: '2023-08-15',
-      status: 'active'
-    },
-    {
-      userId: 'user125',
-      username: '王五',
-      email: 'wangwu@example.com',
-      phone: '13700137000',
-      currentLevel: '种子会员',
-      points: 320,
-      growthValue: 950,
-      joinDate: '2024-01-20',
-      status: 'active'
-    }
-  ];
-  
-  return Promise.resolve({
-    items: mockMembers,
-    total: mockMembers.length,
-    page,
-    limit
+  return request.get<PaginationResponse<MemberListItem>>('/member/list', {
+    params: { page, limit }
   });
 };

@@ -15,6 +15,7 @@
     "@baiun/utils": "workspace:*",
     "ahooks": "^3.9.6",
     "antd": "^6.0.1",
+    "dayjs": "^1.11.19",
     "i18next": "^25.7.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",

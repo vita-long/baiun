@@ -28,6 +28,7 @@ import type {
   PaginationResponse,
   MemberListItem
 } from '@/service/member';
+import dayjs from 'dayjs';
 
 const Members: React.FC = () => {
   // 会员等级管理相关状态
@@ -67,7 +68,7 @@ const Members: React.FC = () => {
     (userId: string, page: number, limit: number) => getPointsHistory(userId, page, limit),
     {
       manual: true,
-      onSuccess: (data) => setPointsHistory(data.items)
+      onSuccess: (data) => setPointsHistory(data.list)
     }
   );
 
@@ -80,7 +81,7 @@ const Members: React.FC = () => {
     (userId: string, page: number, limit: number) => getGrowthValueHistory(userId, page, limit),
     {
       manual: true,
-      onSuccess: (data) => setGrowthHistory(data.items)
+      onSuccess: (data) => setGrowthHistory(data.list)
     }
   );
 
@@ -92,10 +93,6 @@ const Members: React.FC = () => {
     () => getMembers(currentPage, pageSize),
     { manual: false }
   );
-
-  // 计算会员列表数据
-  const members = membersData?.items || [];
-  const totalMembers = membersData?.total || 0;
 
   // 会员等级表格列配置
   const levelColumns = [
@@ -217,8 +214,8 @@ const Members: React.FC = () => {
       dataIndex: 'currentLevel',
       key: 'currentLevel',
       width: 100,
-      render: (level: string) => (
-        <Tag color="blue">{level}</Tag>
+      render: (level: string | MemberLevel) => (
+        <Tag color="blue">{typeof level === 'string' ? level : level.name}</Tag>
       )
     },
     {
@@ -235,9 +232,10 @@ const Members: React.FC = () => {
     },
     {
       title: '加入日期',
-      dataIndex: 'joinDate',
-      key: 'joinDate',
-      width: 120
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 120,
+      render: (date: string) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')
     },
     {
       title: '状态',
@@ -285,7 +283,7 @@ const Members: React.FC = () => {
 
   // 获取会员等级列表
   useEffect(() => {
-    fetchMemberLevels();
+    // fetchMemberLevels();
   }, []);
 
   // 当页码变化时重新获取会员列表
@@ -315,7 +313,6 @@ const Members: React.FC = () => {
   // 处理保存会员等级
   const handleSaveLevel = () => {
     levelForm.validateFields().then(values => {
-      console.log(values)
       const levelData: CreateMemberLevelDto | UpdateMemberLevelDto = {
         ...values,
         holidayGifts: values.holidayGifts ?? false,
@@ -488,11 +485,11 @@ const Members: React.FC = () => {
               <Card>
                 <Table
                   columns={memberColumns}
-                  dataSource={members}
-                  rowKey="userId"
+                  dataSource={membersData?.list}
+                  rowKey="id"
                   loading={membersLoading}
                   pagination={{
-                    total: totalMembers,
+                    total: membersData?.total || 0,
                     pageSize: pageSize,
                     current: currentPage,
                     onChange: handlePageChange,
