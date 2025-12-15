@@ -45,7 +45,7 @@ class AuthStore {
       // 这里暂时使用mock数据
       this.userInfo = {
         username: storage.get('username') || 'user',
-    email: storage.get('email') || 'user@example.com'
+        email: storage.get('email') || 'user@example.com'
       };
     } catch (error) {
       this.error = '获取用户信息失败';
@@ -70,7 +70,7 @@ class AuthStore {
       
       // 存储token
       storage.setTokens(accessToken, refreshToken);
-    storage.set('userInfo', user);
+      storage.set('userInfo', user);
       
       this.isAuthenticated = true;
       this.userInfo = user;
