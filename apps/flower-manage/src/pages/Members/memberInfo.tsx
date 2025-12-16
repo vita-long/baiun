@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input, InputNumber, message, Space, Tag, Timeline } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Table, Modal, Form, Input, InputNumber, message, Space, Tag, Select } from 'antd';
 import { useRequest } from 'ahooks';
 import {
   getMembers,
-  getMemberInfo,
   adjustPoints,
-  getPointsHistory,
   updateMemberStatus
 } from '@/service/member';
 import type {
   MemberInfo,
   AdjustPointsDto,
-  PointsHistory,
   UpdateMemberStatusType
 } from '@/service/member';
 import dayjs from 'dayjs';
@@ -31,32 +27,8 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
   const [adjustForm] = Form.useForm();
 
   // 会员详情相关状态
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [detailMemberId, setDetailMemberId] = useState<string>('');
-  const [detailMemberInfo, setDetailMemberInfo] = useState<MemberInfo | null>(null);
-  const [activeDetailTab, setActiveDetailTab] = useState('info');
-  const [pointsHistory, setPointsHistory] = useState<PointsHistory[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-
-  // 使用useRequest获取会员详情
-  const {
-    run: fetchMemberDetail,
-    data: memberDetail,
-    loading: detailLoading
-  } = useRequest(getMemberInfo, { manual: true });
-
-  // 使用useRequest获取积分历史
-  const {
-    run: fetchPointsHistory,
-    loading: pointsHistoryLoading
-  } = useRequest(
-    (userId: string, page: number, limit: number) => getPointsHistory(userId, page, limit),
-    {
-      manual: true,
-      onSuccess: (data) => setPointsHistory(data.list)
-    }
-  );
 
   // 使用useRequest获取会员列表数据
   const { data: membersData, run: fetchMembers, loading: membersLoading } = useRequest(
@@ -70,25 +42,34 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
       title: '用户ID',
       dataIndex: 'userId',
       key: 'userId',
-      width: 120
+      width: 220
     },
     {
       title: '用户名',
       dataIndex: 'username',
       key: 'username',
-      width: 120
+      width: 120,
+      render: (_: string, record: MemberInfo) => (
+        <span>{record.user.username}</span>
+      )
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
-      width: 180
+      width: 180,
+      render: (_: string, record: MemberInfo) => (
+        <span>{record.user.email}</span>
+      )
     },
     {
       title: '手机号',
       dataIndex: 'phone',
       key: 'phone',
-      width: 120
+      width: 120,
+      render: (_: string, record: MemberInfo) => (
+        <span>{record.user.phone ?? '-'}</span>
+      )
     },
     {
       title: '当前等级',
@@ -130,14 +111,6 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
       width: 200,
       render: (_: any, record: MemberInfo) => (
         <Space size="middle">
-          <Button
-            type="link"
-            icon={<InfoCircleOutlined />}
-            onClick={() => handleViewDetail(record.userId)}
-            size="small"
-          >
-            详情
-          </Button>
           {record.subscriptionStatus === 'active' ? (
             <Button
               type="link"
@@ -162,7 +135,6 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
           >
             调整积分
           </Button>
-
         </Space>
       )
     }
@@ -172,21 +144,6 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
   useEffect(() => {
     fetchMembers();
   }, [currentPage]);
-
-  // 监听会员详情数据变化
-  useEffect(() => {
-    if (memberDetail) {
-      setDetailMemberInfo(memberDetail);
-    }
-  }, [memberDetail]);
-
-  // 处理查看会员详情
-  const handleViewDetail = (userId: string) => {
-    setDetailMemberId(userId);
-    setIsDetailModalOpen(true);
-    fetchMemberDetail(userId);
-    setActiveDetailTab('info');
-  };
 
   // 处理更新会员状态（启用/停用）
   const handleUpdateMemberStatus = (userId: string, active: UpdateMemberStatusType) => {
@@ -214,7 +171,8 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
         // 调整积分
         const dto: AdjustPointsDto = {
           userId: selectedMember,
-          points: values.amount,
+          amount: values.amount,
+          type: values.type,
           reason: values.reason
         };
         adjustPoints(dto)
@@ -230,14 +188,6 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
       .catch(info => {
         console.log('表单验证失败:', info);
       });
-  };
-
-  // 处理详情页签切换
-  const handleDetailTabChange = (key: string) => {
-    setActiveDetailTab(key);
-    if (key === 'pointsHistory') {
-      fetchPointsHistory(detailMemberId, 1, pageSize);
-    }
   };
 
   return (
@@ -272,6 +222,20 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
           </Form.Item>
 
           <Form.Item
+            name="type"
+            label="变动类型"
+            rules={[{ required: true, message: '请选择变动类型' }]}
+          >
+            <Select options={[{
+              label: '增加',
+              value: 'increase'
+            }, {
+              label: '减少',
+              value: 'decrease'
+            }]} />
+          </Form.Item>
+
+          <Form.Item
             name="reason"
             label="调整原因"
             rules={[{ required: true, message: '请输入调整原因' }]}
@@ -279,84 +243,6 @@ const MemberInfoPage: React.FC<MemberInfoProps> = ({ loading }) => {
             <Input.TextArea rows={4} placeholder="请输入调整原因" />
           </Form.Item>
         </Form>
-      </Modal>
-
-      {/* 会员详情模态框 */}
-      <Modal
-        title="会员详情"
-        open={isDetailModalOpen}
-        onCancel={() => setIsDetailModalOpen(false)}
-        width={800}
-        footer={null}
-      >
-        {detailLoading ? (
-          <div style={{ textAlign: 'center', padding: '50px 0' }}>加载中...</div>
-        ) : detailMemberInfo ? (
-          <div>
-            <div style={{ marginBottom: 20 }}>
-              <h3>基本信息</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 20px', marginTop: 10 }}>
-                <div><strong>用户ID：</strong>{detailMemberInfo.userId}</div>
-                <div><strong>当前等级：</strong><Tag color="blue">{detailMemberInfo.currentLevel.name}</Tag></div>
-                <div><strong>积分：</strong>{detailMemberInfo.points}</div>
-                <div><strong>订阅状态：</strong>
-                  <Tag color={
-                    detailMemberInfo.subscriptionStatus === 'active' ? 'green' :
-                      detailMemberInfo.subscriptionStatus === 'inactive' ? 'red' : 'orange'
-                  }>
-                    {detailMemberInfo.subscriptionStatus === 'active' ? '活跃' :
-                      detailMemberInfo.subscriptionStatus === 'inactive' ? '不活跃' : '已过期'}
-                  </Tag>
-                </div>
-                <div><strong>有效期至：</strong>{detailMemberInfo.expireTime || '永久'}</div>
-                <div><strong>剩余免运费券：</strong>{detailMemberInfo.freeShippingTicketsBalance}</div>
-                <div><strong>剩余免费花束升级次数：</strong>{detailMemberInfo.freeBouquetUpgradesBalance}</div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <h3>历史记录</h3>
-              <Space size="middle" style={{ marginBottom: 10 }}>
-                <Button
-                  type={activeDetailTab === 'pointsHistory' ? 'primary' : 'default'}
-                  onClick={() => handleDetailTabChange('pointsHistory')}
-                >
-                  积分历史
-                </Button>
-              </Space>
-
-              <div style={{ marginTop: 20 }}>
-                {activeDetailTab === 'pointsHistory' && (
-                  <>
-                    {pointsHistoryLoading ? (
-                      <div style={{ textAlign: 'center', padding: '50px 0' }}>加载中...</div>
-                    ) : pointsHistory.length > 0 ? (
-                      <Timeline>
-                        {pointsHistory.map((history) => (
-                          <Timeline.Item key={history.id}>
-                            <div>
-                              <strong>积分变动：{history.points > 0 ? '+' : ''}{history.points}</strong>
-                              <br />
-                              剩余积分：{history.totalPoints}
-                              <br />
-                              原因：{history.reason}
-                              <br />
-                              时间：{new Date(history.createdAt).toLocaleString()}
-                            </div>
-                          </Timeline.Item>
-                        ))}
-                      </Timeline>
-                    ) : (
-                      <div style={{ textAlign: 'center', padding: '50px 0' }}>暂无积分历史记录</div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '50px 0' }}>未找到会员信息</div>
-        )}
       </Modal>
     </div>
   );

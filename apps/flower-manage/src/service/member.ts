@@ -1,3 +1,4 @@
+import type { User } from '@/types/user';
 import request from './index';
 
 // 会员等级相关接口
@@ -55,6 +56,7 @@ export interface MemberInfo {
   userId: string;
   currentLevelId: number;
   currentLevel: MemberLevel;
+  user: User;
   points: number;
   expireTime?: string;
   freeShippingTicketsBalance: number;
@@ -67,7 +69,8 @@ export interface MemberInfo {
 // 积分调整接口
 export interface AdjustPointsDto {
   userId: string;
-  points: number;
+  amount: number;
+  type: 'increase' | 'decrease';
   reason: string;
 }
 
