@@ -26,7 +26,7 @@ const request = new RequestClient({
     },
   },
   authCallback: (error: AxiosError) => {
-    const code = error.response?.data?.code;
+    const code = (error.response?.data as { code?: number })?.code;
     // 未登录，跳转登录页
     if (code === 12001) {
       storage.remove('accessToken');

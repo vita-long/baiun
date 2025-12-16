@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes as RouterRoutes, Route, useLocation } from 'react-router-dom';
-import NavMenu from '../components/NavMenu';
 
 // 定义路由配置接口，支持嵌套路由
 export interface RouteConfig {
@@ -30,22 +29,6 @@ const mainRoutes: RouteConfig[] = [
   {
     path: '/',
     element: lazy(() => import('@/pages/Dashboard')),
-  },
-  {
-    path: '/ico',
-    element: lazy(() => import('@/pages/Ico')),
-  },
-  {
-    path: '/image-cover',
-    element: lazy(() => import('@/pages/ImageCover')),
-  },
-  {
-    path: '/redis',
-    element: lazy(() => import('@/pages/Redis')),
-  },
-  {
-    path: '/bukets',
-    element: lazy(() => import('@/pages/bukets')),
   },
   // 示例：支持嵌套路由
   /*

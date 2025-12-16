@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Avatar, Dropdown, Select, message } from 'antd';
 import type { MenuProps } from 'antd';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import authStore from '@/store/authStore';
 import i18n from '@/i18n';

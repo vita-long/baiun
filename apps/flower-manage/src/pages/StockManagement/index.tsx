@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Table, Button, Modal, Form, InputNumber, Input, Select, message, Typography, Badge, Space } from 'antd';
 import { PlusOutlined, HistoryOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { getAllProducts, adjustStock, getStockHistory } from '@/service/stock';
-import type { Product } from '@/types/product';
+import { ProductTypeMap, type Product } from '@/types/product';
 import type { AdjustStockRequest, StockHistory, StockAdjustmentType } from '@/types/stock';
 import Layout from '@/components/Layout';
 import styles from './index.module.less';
@@ -115,7 +115,11 @@ const StockManagement: React.FC = () => {
       title: '价格',
       dataIndex: 'basePrice',
       key: 'basePrice',
-      render: (price: number) => price ? `¥${price}` : 0,
+      render: (price: number, record: Product) => {
+        let res = record.productType === ProductTypeMap.Normal ?
+          (price ? `¥${price}` : 0) : (`${record.pointsPrice}积分`);
+        return res;
+      },
       width: 100,
     },
     {

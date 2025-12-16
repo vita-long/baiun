@@ -23,6 +23,10 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/Products')),
   },
   {
+    path: '/mall',
+    element: lazy(() => import('@/pages/PointsMall')),
+  },
+  {
     path: '/orders',
     element: lazy(() => import('@/pages/Order')),
   },
