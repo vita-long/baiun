@@ -55,7 +55,6 @@ export interface MemberInfo {
   userId: string;
   currentLevelId: number;
   currentLevel: MemberLevel;
-  growthValue: number;
   points: number;
   expireTime?: string;
   freeShippingTicketsBalance: number;
@@ -65,16 +64,10 @@ export interface MemberInfo {
   updatedAt: string;
 }
 
-// 积分和成长值调整接口
+// 积分调整接口
 export interface AdjustPointsDto {
   userId: string;
   points: number;
-  reason: string;
-}
-
-export interface AdjustGrowthValueDto {
-  userId: string;
-  growthValue: number;
   reason: string;
 }
 
@@ -84,15 +77,6 @@ export interface PointsHistory {
   userId: string;
   points: number;
   totalPoints: number;
-  reason: string;
-  createdAt: string;
-}
-
-export interface GrowthValueHistory {
-  id: number;
-  userId: string;
-  growthValue: number;
-  totalGrowthValue: number;
   reason: string;
   createdAt: string;
 }
@@ -159,16 +143,7 @@ export const getPointsHistory = (userId: string, page: number = 1, limit: number
   });
 };
 
-// 成长值管理API
-export const adjustGrowthValue = (data: AdjustGrowthValueDto) => {
-  return request.post<MemberInfo>('/member/growth-value/adjust', data);
-};
 
-export const getGrowthValueHistory = (userId: string, page: number = 1, limit: number = 10) => {
-  return request.get<PaginationResponse<GrowthValueHistory>>('/member/growth-value/history', {
-    params: { userId, page, limit }
-  });
-};
 
 // 会员订阅API
 export const subscribeMember = (levelId: number) => {
@@ -181,23 +156,8 @@ export const getMemberSubscriptions = (userId: string, page: number = 1, limit: 
   });
 };
 
-// 会员列表API - 模拟接口，实际项目中需要后端提供
-export interface MemberListItem {
-  userId: string;
-  username: string;
-  email: string;
-  phone: string;
-  currentLevel: MemberLevel;
-  points: number;
-  growthValue: number;
-  joinDate: string;
-  status: 'active' | 'inactive';
-}
-
-
-
 export const getMembers = (page: number = 1, limit: number = 10) => {
-  return request.get<PaginationResponse<MemberListItem>>('/member/list', {
+  return request.get<PaginationResponse<MemberInfo>>('/member/list', {
     params: { page, limit }
   });
 };
