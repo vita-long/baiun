@@ -14,7 +14,8 @@ import {
   adjustGrowthValue,
   getPointsHistory,
   getGrowthValueHistory,
-  getMembers
+  getMembers,
+  updateMemberStatus
 } from '@/service/member';
 import type {
   MemberLevel,
@@ -26,7 +27,8 @@ import type {
   PointsHistory,
   GrowthValueHistory,
   PaginationResponse,
-  MemberListItem
+  MemberListItem,
+  UpdateMemberStatusType
 } from '@/service/member';
 import dayjs from 'dayjs';
 
@@ -239,8 +241,8 @@ const Members: React.FC = () => {
     },
     {
       title: '状态',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'subscriptionStatus',
+      key: 'subscriptionStatus',
       width: 80,
       render: (status: string) => (
         <Tag color={status === 'active' ? 'green' : 'red'}>
@@ -251,7 +253,7 @@ const Members: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 150,
+      width: 200,
       render: (_: any, record: any) => (
         <Space size="middle">
           <Button
@@ -262,6 +264,24 @@ const Members: React.FC = () => {
           >
             详情
           </Button>
+          {record.subscriptionStatus === 'active' && (
+            <Button
+              type="link"
+              onClick={() => handleUpdateMemberStatus(record.userId, 'inactive')}
+              size="small"
+            >
+              停用
+            </Button>
+          )}
+          {record.subscriptionStatus === 'inactive' && (
+            <Button
+              type="link"
+              onClick={() => handleUpdateMemberStatus(record.userId, 'active')}
+              size="small"
+            >
+              启用
+            </Button>
+          )}
           <Button
             type="link"
             onClick={() => handleAdjustPoints(record.userId)}
@@ -427,6 +447,17 @@ const Members: React.FC = () => {
     setIsDetailModalOpen(true);
     fetchMemberDetail(userId);
     setActiveDetailTab('info');
+  };
+
+  // 处理更新会员状态（启用/停用）
+  const handleUpdateMemberStatus = (userId: string, active: UpdateMemberStatusType) => {
+    updateMemberStatus(userId, active)
+      .then(() => {
+        fetchMembers();
+      })
+      .catch(() => {
+        message.error('调整失败');
+      });
   };
 
   // 监听会员详情数据变化

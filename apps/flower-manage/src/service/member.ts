@@ -194,8 +194,18 @@ export interface MemberListItem {
   status: 'active' | 'inactive';
 }
 
+
+
 export const getMembers = (page: number = 1, limit: number = 10) => {
   return request.get<PaginationResponse<MemberListItem>>('/member/list', {
     params: { page, limit }
   });
+};
+
+// 会员状态更新接口
+export type UpdateMemberStatusType = 'active' | 'inactive' | 'expired';
+
+// 更新会员状态API
+export const updateMemberStatus = (userId: string, active: UpdateMemberStatusType) => {
+  return request.post<MemberInfo>('/member/status/activate', { userId, active });
 };
