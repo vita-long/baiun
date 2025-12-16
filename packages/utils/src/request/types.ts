@@ -39,4 +39,5 @@ export interface InstanceConfig {
   timeout?: number;
   headers?: Record<string, string>;
   interceptors?: InterceptorConfig;
+  authCallback?: (error: AxiosError) => void;
 }

@@ -39,6 +39,10 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/Members')),
   },
   {
+    path: '/profile',
+    element: lazy(() => import('@/pages/Profile')),
+  },
+  {
     path: '/login',
     element: lazy(() => import('@/pages/auth/LoginPage')),
   },

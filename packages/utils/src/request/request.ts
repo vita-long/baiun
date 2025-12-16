@@ -10,6 +10,7 @@ class RequestClient {
     hide: () => void;
   };
   private errorHandler?: (error: AxiosError) => void;
+  private authCallback?: (error: AxiosError) => void;
 
   constructor(config: InstanceConfig = {}) {
     // 创建axios实例
@@ -21,7 +22,7 @@ class RequestClient {
         ...config.headers,
       },
     });
-
+    this.authCallback = config?.authCallback;
     // 设置默认拦截器
     this.setupDefaultInterceptors(config.interceptors);
   }
@@ -154,6 +155,7 @@ class RequestClient {
       switch (status) {
         case 401:
           errorMessage = '未授权，请重新登录';
+          this.authCallback?.(error);
           break;
         case 403:
           errorMessage = '拒绝访问';

@@ -73,7 +73,7 @@ const AppHeader: React.FC = () => {
             <span className={styles["user-name"]}>{currentUserInfo.username}</span>
             <Dropdown menu={menuProps} trigger={['click']}>
               <Avatar
-                icon={<UserOutlined />}
+                src={userInfo?.avatar}
                 size={40}
                 className={styles["user-avatar"]}
                 style={{ cursor: 'pointer' }}

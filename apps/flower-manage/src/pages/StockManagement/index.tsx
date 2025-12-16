@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Table, Button, Modal, Form, InputNumber, Input, Select, message, Typography, Badge, Space } from 'antd';
 import { PlusOutlined, HistoryOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { getAllProducts, adjustStock, getStockHistory, getLowStockProducts } from '@/service/stock';
+import { getAllProducts, adjustStock, getStockHistory } from '@/service/stock';
 import type { Product } from '@/types/product';
 import type { AdjustStockRequest, StockHistory, StockAdjustmentType } from '@/types/stock';
 import Layout from '@/components/Layout';
@@ -17,7 +17,7 @@ const StockManagement: React.FC = () => {
   const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [stockHistory, setStockHistory] = useState<StockHistory[]>([]);
-  const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
+  const [lowStockProducts] = useState<Product[]>([]);
   const [form] = Form.useForm<AdjustStockRequest>();
 
   // 获取产品列表

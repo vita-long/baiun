@@ -6,3 +6,4 @@
 // 导入并重新导出类型判断工具
 export * from './tools/index';
 export * from './request/index';
+export type { AxiosError } from './request/request';

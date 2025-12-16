@@ -44,6 +44,11 @@ const SideMenu: React.FC = () => {
       label: <Link to="/members">会员管理</Link>,
       icon: <UserOutlined />,
     },
+    {
+      key: '/profile',
+      label: <Link to="/profile">个人中心</Link>,
+      icon: <UserOutlined />,
+    },
   ];
 
   return (

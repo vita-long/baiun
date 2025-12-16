@@ -1,5 +1,6 @@
 import { RequestClient } from '@baiun/utils';
 import { storage } from '@/utils/storage';
+import type { AxiosError } from '@baiun/utils';
 
 // 使用Vite的环境变量，避免TypeScript错误
 // 开发环境默认配置
@@ -23,7 +24,21 @@ const request = new RequestClient({
         return config;
       },
     },
-  }
+  },
+  authCallback: (error: AxiosError) => {
+    const code = error.response?.data?.code;
+    // 未登录，跳转登录页
+    if (code === 12001) {
+      storage.remove('accessToken');
+      storage.remove('refreshToken');
+      window.location.href = '/login';
+    } else if(code === 12003) {
+      // token 过期
+      storage.remove('accessToken');
+      storage.remove('refreshToken');
+      window.location.href = '/login';
+    }
+  },
 });
 
 export { request };
