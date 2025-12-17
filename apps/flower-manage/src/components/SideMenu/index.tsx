@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
-import { AppstoreOutlined, ShoppingOutlined, DatabaseOutlined, FileTextOutlined, CreditCardOutlined, DatabaseOutlined as InventoryOutlined, UserOutlined, GiftOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, ShoppingOutlined, DatabaseOutlined, FileTextOutlined, CreditCardOutlined, DatabaseOutlined as InventoryOutlined, UserOutlined, GiftOutlined, BarChartOutlined, GiftOutlined as CouponOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 
 const SideMenu: React.FC = () => {
@@ -28,6 +28,18 @@ const SideMenu: React.FC = () => {
       key: '/mall',
       label: <Link to="/mall">积分商城管理</Link>,
       icon: <GiftOutlined />,
+    },
+    {
+      key: '/marketing',
+      label: '营销管理',
+      icon: <BarChartOutlined />,
+      children: [
+        {
+          key: '/marketing/coupons',
+          label: <Link to="/marketing/coupons">优惠卷管理</Link>,
+          icon: <CouponOutlined />,
+        },
+      ],
     },
     {
       key: '/orders',

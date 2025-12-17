@@ -31,6 +31,10 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/Order')),
   },
   {
+    path: '/marketing/coupons',
+    element: lazy(() => import('@/pages/Marketing/Coupons')),
+  },
+  {
     path: '/payment-methods',
     element: lazy(() => import('@/pages/PaymentMethod')),
   },

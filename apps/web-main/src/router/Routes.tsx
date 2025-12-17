@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes as RouterRoutes, Route, useLocation } from 'react-router-dom';
-import NavMenu from '../components/NavMenu';
 
 // 定义路由配置接口，支持嵌套路由
 export interface RouteConfig {

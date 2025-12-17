@@ -2,6 +2,7 @@ import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import { Layout, ConfigProvider } from 'antd';
 import AppRoutes from './router/Routes';
 import AppHeader from './components/Header';
+import zhCN from 'antd/locale/zh_CN';
 import './index.css';
 
 const { Content, Footer } = Layout;
@@ -35,7 +36,7 @@ const AppLayout: React.FC = () => {
 // 主应用组件
 function App() {
   return (
-    <ConfigProvider>
+    <ConfigProvider locale={zhCN}>
       <Router>
         <AppLayout />
       </Router>

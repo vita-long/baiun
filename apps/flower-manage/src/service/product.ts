@@ -1,4 +1,4 @@
-import type { Product, ProductCreateRequest, ProductUpdateRequest, PointsProductListRequest } from '@/types/product';
+import type { Product, ProductCreateRequest, ProductUpdateRequest } from '@/types/product';
 import type { StockHistoryResponse } from '@/types/stock';
 import { request } from './index';
 
