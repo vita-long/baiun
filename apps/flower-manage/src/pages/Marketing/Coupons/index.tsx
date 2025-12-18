@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, Select, DatePicker, message, Popconfirm, Card } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, Select, DatePicker, message, Popconfirm, Card, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { getCoupons, createCoupon, updateCoupon, deleteCoupon, updateCouponStatus } from '@/service/coupon';
-import { type Coupon, type CouponCreateRequest, type CouponType, type CouponStatus, CouponTypeToName, CouponTypeMap } from '@/types/coupon';
+import { getCoupons, createCoupon, updateCoupon, deleteCoupon } from '@/service/coupon';
+import { type Coupon, type CouponType, type CouponStatus, CouponTypeToName, CouponTypeMap, CouponStatusToName, CouponStatusMap, type CouponCreateRequest, type CouponUpdateRequest } from '@/types/coupon';
 import styles from './index.module.less';
 import Layout from '@/components/Layout';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-
-const CouponStatusMap = {
-  enabled: '启用',
-  disabled: '禁用',
-  expired: '已过期',
-};
 
 const CouponPage: React.FC = () => {
   const [form] = Form.useForm();
@@ -59,9 +53,15 @@ const CouponPage: React.FC = () => {
 
   // 显示添加/编辑模态框
   const showModal = (coupon?: Coupon) => {
+    if (coupon?.type === CouponTypeMap.FixedAmount) {
+      coupon.fixedAmount = coupon.value;
+    }
     setEditingCoupon(coupon || null);
     if (coupon) {
-      form.setFieldsValue(coupon);
+      form.setFieldsValue({
+        ...coupon,
+        time: [dayjs(coupon.startTime), dayjs(coupon.endTime)],
+      });
     } else {
       form.resetFields();
     }
@@ -79,7 +79,6 @@ const CouponPage: React.FC = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
-      console.log(values);
 
       const startTime = dayjs(values.time[0]).format('YYYY-MM-DD HH:mm:ss');
       const endTime = dayjs(values.time[1]).format('YYYY-MM-DD HH:mm:ss');
@@ -89,7 +88,7 @@ const CouponPage: React.FC = () => {
         message.error('请选择优惠卷的有效期');
         return;
       }
-      const params = {
+      const params: CouponCreateRequest = {
         name: values.name,
         type: values.type,
         value: values.fixedAmount,
@@ -97,10 +96,20 @@ const CouponPage: React.FC = () => {
         endTime,
         source: 'admin_create',
         totalQuantity: values.totalQuantity,
+        description: values.description
+      }
+
+      if (values.type === CouponTypeMap.ShippingFree) {
+        params.reductionAmount = values.reductionAmount;
+      } else if (values.type === CouponTypeMap.Discount) {
+        params.discount = values.discount;
+      } else {
+        params.value = values.fixedAmount;
       }
 
       if (editingCoupon) {
-        await updateCoupon(editingCoupon.id, params);
+        const updateParams: CouponUpdateRequest = { ...params, code: editingCoupon.code }
+        await updateCoupon(editingCoupon.id, updateParams);
         message.success('优惠卷更新成功');
       } else {
         await createCoupon(params);
@@ -127,10 +136,10 @@ const CouponPage: React.FC = () => {
   };
 
   // 更新优惠卷状态
-  const handleUpdateStatus = async (id: string, status: 'enabled' | 'disabled') => {
+  const handleUpdateStatus = async (id: string, status: CouponStatus) => {
     try {
-      await updateCouponStatus(id, status);
-      message.success(`优惠卷已${status === 'enabled' ? '启用' : '禁用'}`);
+      await updateCoupon(id, { status });
+      message.success(`优惠卷${status === CouponStatusMap.Active ? '已激活' : '已禁用'}`);
       refreshData();
     } catch (error) {
       message.error('操作失败，请重试');
@@ -139,6 +148,7 @@ const CouponPage: React.FC = () => {
 
   // 表格列配置
   const columns = [
+    { title: '优惠卷码', dataIndex: 'code', key: 'code' },
     { title: '优惠卷名称', dataIndex: 'name', key: 'name' },
     {
       title: '类型',
@@ -154,14 +164,13 @@ const CouponPage: React.FC = () => {
         if (type === CouponTypeMap.ShippingFree) {
           return `运费免单`;
         } else if (type === CouponTypeMap.Discount) {
-          return `${(record.discountRate || 0) * 10}折`;
+          return `${(record.discount || 0) * 10}折`;
         } else {
           return `立减${record.value}元`;
         }
       }
     },
     { title: '总数量', dataIndex: 'totalQuantity', key: 'totalQuantity' },
-    { title: '已使用', dataIndex: 'usedQuantity', key: 'usedQuantity' },
     {
       title: '有效期',
       key: 'date',
@@ -171,7 +180,26 @@ const CouponPage: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: CouponStatus) => CouponStatusMap[status]
+      render: (status: CouponStatus) => {
+        let color: 'success' | 'warning' | 'error' | 'default';
+        switch (status) {
+          case CouponStatusMap.Active:
+            color = 'success';
+            break;
+          case CouponStatusMap.Inactive:
+            color = 'warning';
+            break;
+          case CouponStatusMap.Expired:
+            color = 'default';
+            break;
+          case CouponStatusMap.Deleted:
+            color = 'error';
+            break;
+          default:
+            color = 'default';
+        }
+        return <Tag color={color}>{CouponStatusToName[status]}</Tag>;
+      }
     },
     {
       title: '操作',
@@ -183,28 +211,33 @@ const CouponPage: React.FC = () => {
             size="small"
             icon={<EditOutlined />}
             onClick={() => showModal(record)}
+            disabled={([CouponStatusMap.Expired, CouponStatusMap.Deleted] as CouponStatus[]).includes(record.status)}
           >
             编辑
           </Button>
-          {record.status === 'enabled' ? (
-            <Button
-              size="small"
-              onClick={() => handleUpdateStatus(record.id, 'disabled')}
-            >
-              禁用
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => handleUpdateStatus(record.id, 'enabled')}
-            >
-              启用
-            </Button>
-          )}
-          <Popconfirm
+          {
+            ([CouponStatusMap.Active, CouponStatusMap.Inactive] as CouponStatus[]).includes(record.status) && (
+              record.status === CouponStatusMap.Active ? (
+                <Button
+                  size="small"
+                  onClick={() => handleUpdateStatus(record.id, CouponStatusMap.Inactive)}
+                >
+                  禁用
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => handleUpdateStatus(record.id, CouponStatusMap.Active)}
+                >
+                  激活
+                </Button>
+              )
+            )
+          }
+          < Popconfirm
             title="确定要删除这个优惠卷吗？"
-            icon={<ExclamationCircleOutlined />}
+            icon={< ExclamationCircleOutlined />}
             onConfirm={() => handleDelete(record.id)}
             okText="确定"
             cancelText="取消"
@@ -213,11 +246,12 @@ const CouponPage: React.FC = () => {
               danger
               size="small"
               icon={<DeleteOutlined />}
+              disabled={record.status === CouponStatusMap.Deleted}
             >
               删除
             </Button>
-          </Popconfirm>
-        </div>
+          </Popconfirm >
+        </div >
       )
     },
   ];
@@ -235,19 +269,19 @@ const CouponPage: React.FC = () => {
     reductionAmount: [{
       validator: (_: any, value: number, callback: (error?: string) => void) => {
         const productType = form.getFieldValue('type');
-        if (productType === 'full_reduction' && !value) {
-          callback('满减券必须设置减免金额');
+        if (productType === CouponTypeMap.ShippingFree && !value) {
+          callback('运单减免券必须设置减免金额');
         } else callback();
       }
     }],
-    discountRate: [{
+    discount: [{
       validator: (_: any, value: number, callback: (error?: string) => void) => {
         const productType = form.getFieldValue('type');
-        if (productType === 'discount') {
+        if (productType === CouponTypeMap.Discount) {
           if (!value) {
-            callback('折扣券必须设置折扣率');
+            callback('折扣券必须设置折扣');
           } else if (value < 0.1 || value > 1) {
-            callback('折扣率必须在0.1-1之间');
+            callback('折扣必须在0.1-1之间');
           } else callback();
         } else callback();
       }
@@ -255,7 +289,7 @@ const CouponPage: React.FC = () => {
     fixedAmount: [{
       validator: (_: any, value: number, callback: (error?: string) => void) => {
         const productType = form.getFieldValue('type');
-        if (productType === 'fixed_amount' && !value) {
+        if (productType === CouponTypeMap.FixedAmount && !value) {
           callback('固定金额券必须设置固定金额');
         } else callback();
       }
@@ -330,10 +364,10 @@ const CouponPage: React.FC = () => {
           >
             <Form form={form} layout="vertical" className={styles.form}>
               <Form.Item name="name" label="优惠卷名称" rules={[{ required: true, message: '请输入优惠卷名称' }]}>
-                <Input placeholder="请输入优惠卷名称" />
+                <Input placeholder="请输入优惠卷名称" disabled={!!editingCoupon} />
               </Form.Item>
               <Form.Item name="type" label="优惠卷类型" rules={[{ required: true, message: '请选择优惠卷类型' }]}>
-                <Select placeholder="选择优惠卷类型">
+                <Select placeholder="选择优惠卷类型" disabled={!!editingCoupon}>
                   <Option value={CouponTypeMap.ShippingFree}>{CouponTypeToName[CouponTypeMap.ShippingFree]}</Option>
                   <Option value={CouponTypeMap.Discount}>{CouponTypeToName[CouponTypeMap.Discount]}</Option>
                   <Option value={CouponTypeMap.FixedAmount}>{CouponTypeToName[CouponTypeMap.FixedAmount]}</Option>
@@ -349,8 +383,8 @@ const CouponPage: React.FC = () => {
                   {/* 折扣券配置 */ }
                   if (type === CouponTypeMap.Discount) {
                     return (
-                      <Form.Item name="discountRate" label="折扣率" rules={formRules.discountRate}>
-                        <InputNumber style={{ width: '100%' }} placeholder="请输入折扣率（如0.8表示8折）" />
+                      <Form.Item name="discount" label="折扣" rules={formRules.discount}>
+                        <InputNumber style={{ width: '100%' }} placeholder="请输入折扣（如0.8表示8折）" />
                       </Form.Item>
                     )
                   }

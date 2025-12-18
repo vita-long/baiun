@@ -8,6 +8,40 @@ const SideMenu: React.FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // 计算当前路径的所有父级路径，用于展开菜单
+  const getParentKeys = (path: string) => {
+    const keys: string[] = [];
+    const pathSegments = path.split('/').filter(Boolean);
+
+    if (pathSegments.length > 1) {
+      let parentPath = '';
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        parentPath += `/${pathSegments[i]}`;
+        keys.push(parentPath);
+      }
+    }
+
+    return keys;
+  };
+
+  // 初始openKeys为当前路径的父级路径
+  const [openKeys, setOpenKeys] = React.useState<string[]>(getParentKeys(currentPath));
+
+  // 处理菜单展开/折叠事件
+  const handleOpenChange = (keys: string[]) => {
+    setOpenKeys(keys);
+  };
+
+  // 当路径变化时，确保相关的父菜单保持展开
+  React.useEffect(() => {
+    const parentKeys = getParentKeys(currentPath);
+    setOpenKeys(prevKeys => {
+      // 合并当前路径的父级路径和用户手动展开的路径
+      const newKeys = new Set([...prevKeys, ...parentKeys]);
+      return Array.from(newKeys);
+    });
+  }, [currentPath]);
+
   const menuItems = [
     {
       key: '/',
@@ -73,6 +107,8 @@ const SideMenu: React.FC = () => {
       <Menu
         mode="inline"
         selectedKeys={[currentPath]}
+        openKeys={openKeys}
+        onOpenChange={handleOpenChange}
         items={menuItems}
         className={styles.menu}
         onClick={() => {
