@@ -31,10 +31,6 @@ const mainRoutes: RouteConfig[] = [
     element: lazy(() => import('@/pages/Dashboard')),
   },
   {
-    path: '/ico',
-    element: lazy(() => import('@/pages/Ico')),
-  },
-  {
     path: '/image-cover',
     element: lazy(() => import('@/pages/ImageCover')),
   },
