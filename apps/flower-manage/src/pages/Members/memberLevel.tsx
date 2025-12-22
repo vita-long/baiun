@@ -54,7 +54,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
       dataIndex: 'discountRate',
       key: 'discountRate',
       width: 100,
-      render: (rate: number) => `${(rate * 10).toFixed(1)}折`
+      render: (rate: number) => Number(rate) === 0 ? '无折扣' : `${(rate * 10).toFixed(1)}折`
     },
     {
       title: '每月免运费券',
@@ -201,7 +201,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
             label="等级名称"
             rules={[{ required: true, message: '请输入等级名称' }]}
           >
-            <Input placeholder="请输入等级名称" />
+            <Input placeholder="请输入等级名称" disabled={!!editingLevel} />
           </Form.Item>
 
           <Form.Item
@@ -209,7 +209,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
             label="等级标识"
             rules={[{ required: true, message: '请输入等级标识' }]}
           >
-            <Input placeholder="请输入等级标识" />
+            <Input placeholder="请输入等级标识" disabled={!!editingLevel} />
           </Form.Item>
 
           <Form.Item
@@ -230,10 +230,10 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
 
           <Form.Item
             name="discountRate"
-            label="折扣率"
-            rules={[{ required: true, message: '请输入折扣率' }]}
+            label="折扣"
+            rules={[{ required: true, message: '请输入折扣' }]}
           >
-            <InputNumber min={0.1} max={1} step={0.1} style={{ width: '100%' }} placeholder="例如：0.8表示8折" />
+            <InputNumber min={0} max={1} step={0.1} style={{ width: '100%' }} placeholder="例如：0.8表示8折" />
           </Form.Item>
 
           <Form.Item
