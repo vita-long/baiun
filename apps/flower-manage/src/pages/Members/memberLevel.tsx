@@ -50,7 +50,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
       render: (period: number) => period === 0 ? '永久' : `${period}个月`
     },
     {
-      title: '折扣率',
+      title: '折扣',
       dataIndex: 'discountRate',
       key: 'discountRate',
       width: 100,
@@ -153,6 +153,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
               message.error('会员等级修改失败');
             });
         } else {
+          console.log(values);
           // 添加新会员等级
           createMemberLevel(values as CreateMemberLevelDto)
             .then(() => {
@@ -248,6 +249,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
             name="unlimitedFreeShipping"
             label="无限免运费"
             valuePropName="checked"
+            initialValue={false}
           >
             <Switch />
           </Form.Item>
@@ -264,6 +266,7 @@ const MemberLevelPage: React.FC<MemberLevelProps> = ({ loading }) => {
             name="holidayGifts"
             label="节日礼物"
             valuePropName="checked"
+            initialValue={false}
           >
             <Switch />
           </Form.Item>

@@ -7,11 +7,11 @@ export const getOrders = async (params: OrderListRequest): Promise<OrderListResp
 };
 
 // 获取订单详情
-export const getOrderDetail = async (orderId: string): Promise<Order> => {
-  return request.get(`/orders/${orderId}`);
+export const getOrderDetail = async (id: string): Promise<Order> => {
+  return request.get(`/orders/${id}`);
 };
 
 // 更新订单状态
-export const updateOrderStatus = async (orderId: string, data: UpdateOrderStatusRequest): Promise<Order> => {
-  return request.put(`/orders/${orderId}/status`, data);
+export const updateOrderStatus = async (id: string, data: UpdateOrderStatusRequest): Promise<Order> => {
+  return request.put(`/orders/${id}/status`, data);
 };

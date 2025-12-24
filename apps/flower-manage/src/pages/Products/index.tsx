@@ -17,7 +17,7 @@ const Products: React.FC = () => {
   const [page] = useState(1);
   const [pageSize] = useState(10);
 
-  const { data: categories } = useRequest(getCategories);
+  const { data: categories } = useRequest(() => getCategories('product'));
   const { data: products, run: fetchProduct, loading } = useRequest(() => getProducts({
     page,
     pageSize,
@@ -403,7 +403,7 @@ const Products: React.FC = () => {
           >
             <Select placeholder="请选择商品分类">
               {categories?.map(cat => (
-                <Select.Option key={cat.categoryId} value={cat.categoryId}>
+                <Select.Option key={cat.id} value={cat.id}>
                   {cat.categoryName}
                 </Select.Option>
               ))}

@@ -53,7 +53,7 @@ const StockManagement: React.FC = () => {
   // 打开库存历史记录弹窗
   const handleViewHistory = (product: Product) => {
     setSelectedProduct(product);
-    fetchStockHistory(product.productId);
+    fetchStockHistory(product.id);
     setHistoryModalVisible(true);
   };
 
@@ -62,7 +62,7 @@ const StockManagement: React.FC = () => {
     if (!selectedProduct) return;
 
     try {
-      await adjustStock(selectedProduct.productId, values);
+      await adjustStock(selectedProduct.id, values);
       message.success('库存调整成功');
       setAdjustModalVisible(false);
       fetchProducts();
@@ -84,12 +84,6 @@ const StockManagement: React.FC = () => {
   // 表格列定义
   const columns = [
     {
-      title: '产品ID',
-      dataIndex: 'productId',
-      key: 'productId',
-      width: 220,
-    },
-    {
       title: '产品名称',
       dataIndex: 'name',
       key: 'name',
@@ -102,7 +96,7 @@ const StockManagement: React.FC = () => {
       key: 'stock',
       width: 200,
       render: (stock: number, record: Product) => {
-        const isLowStock = lowStockProducts.some(item => item.productId === record.productId);
+        const isLowStock = lowStockProducts.some(item => item.id === record.id);
         return (
           <Badge status={isLowStock ? 'error' : 'success'}>
             {stock}
@@ -172,7 +166,7 @@ const StockManagement: React.FC = () => {
             </Text>
             <div style={{ marginTop: 8 }}>
               {lowStockProducts.map(product => (
-                <Badge key={product.productId} status="error" text={product.name} style={{ marginRight: 8 }} />
+                <Badge key={product.id} status="error" text={product.name} style={{ marginRight: 8 }} />
               ))}
             </div>
           </Card>
@@ -183,7 +177,7 @@ const StockManagement: React.FC = () => {
           <Table
             columns={columns}
             dataSource={products}
-            rowKey="productId"
+            rowKey="id"
             loading={loading}
             pagination={{ pageSize: 10 }}
           />
@@ -195,10 +189,12 @@ const StockManagement: React.FC = () => {
           open={adjustModalVisible}
           onCancel={() => setAdjustModalVisible(false)}
           footer={null}
+          destroyOnHidden={true}
         >
           <Form
             form={form}
             layout="vertical"
+            clearOnDestroy={true}
             onFinish={handleAdjustSubmit}
           >
             <Form.Item label="当前库存" name="currentStock">

@@ -1,7 +1,7 @@
 // 支付方式类型定义
 export interface PaymentMethod {
   id: string;
-  paymentId: string;
+  code: string;
   paymentName: string;
   description?: string;
   isEnabled: boolean;

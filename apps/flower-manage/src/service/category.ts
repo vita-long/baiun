@@ -2,8 +2,8 @@ import type { Category, CategoryCreateRequest, CategoryUpdateRequest } from '@/t
 import { request } from './index';
 
 // 获取分类列表
-export const getCategories = async (): Promise<Category[]> => {
-  return request.get('/categories');
+export const getCategories = async (type?: string): Promise<Category[]> => {
+  return request.get(`/categories/active`, { params: { type } });
 };
 
 // 创建分类

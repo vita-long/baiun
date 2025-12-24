@@ -39,13 +39,13 @@ const PaymentMethod: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeletePaymentMethod = async (paymentId: string) => {
+  const handleDeletePaymentMethod = async (code: string) => {
     Modal.confirm({
       title: '确认删除',
       content: '确定要删除这个支付方式吗？',
       onOk: async () => {
         try {
-          await deletePaymentMethod(paymentId);
+          await deletePaymentMethod(code);
           message.success('删除成功');
           fetchPaymentMethod();
         } catch (error) {
@@ -62,7 +62,7 @@ const PaymentMethod: React.FC = () => {
 
       if (editingPaymentMethod) {
         // 编辑模式
-        await updatePaymentMethod(editingPaymentMethod.paymentId, values);
+        await updatePaymentMethod(editingPaymentMethod.code, values);
         message.success('更新成功');
       } else {
         await createPaymentMethod(values);
@@ -112,7 +112,7 @@ const PaymentMethod: React.FC = () => {
             type="link"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => handleDeletePaymentMethod(record.paymentId)}
+            onClick={() => handleDeletePaymentMethod(record.code)}
           >
             删除
           </Button>
@@ -133,7 +133,7 @@ const PaymentMethod: React.FC = () => {
         <Table
           columns={columns}
           dataSource={paymentMethods ?? []}
-          rowKey="paymentId"
+          rowKey="code"
           loading={loading}
           pagination={false}
         />

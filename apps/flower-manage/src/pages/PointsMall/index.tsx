@@ -17,7 +17,7 @@ const PointsMall: React.FC = () => {
   const [page] = useState(1);
   const [pageSize] = useState(10);
 
-  const { data: categories } = useRequest(getCategories);
+  const { data: categories } = useRequest(() => getCategories('points'));
   const { data: products, run: fetchProduct, loading } = useRequest(() => getProducts({
     page,
     pageSize,
@@ -44,8 +44,8 @@ const PointsMall: React.FC = () => {
     form.setFieldsValue({
       name: product.name,
       mainImage: [{
-        uid: `main-${product.productId}`,
-        name: `main-${product.productId}`,
+        uid: `main-${product.id}`,
+        name: `main-${product.id}`,
         status: 'done' as const,
         url: product.mainImage
       }],
@@ -58,13 +58,13 @@ const PointsMall: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = async (productId: string) => {
+  const handleDeleteProduct = async (id: string) => {
     Modal.confirm({
       title: '确认删除',
       content: '确定要删除这个积分商品吗？',
       onOk: async () => {
         try {
-          await deleteProduct(productId);
+          await deleteProduct(id);
           message.success('删除成功');
           fetchProduct();
         } catch (error) {
@@ -88,7 +88,7 @@ const PointsMall: React.FC = () => {
       };
       if (editingProduct) {
         // 编辑模式
-        await updateProduct(editingProduct.productId, productData);
+        await updateProduct(editingProduct.id, productData);
         fetchProduct();
         message.success('更新成功');
       } else {
@@ -217,7 +217,7 @@ const PointsMall: React.FC = () => {
             type="link"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => handleDeleteProduct(record.productId)}
+            onClick={() => handleDeleteProduct(record.id)}
           >
             删除
           </Button>
@@ -238,7 +238,7 @@ const PointsMall: React.FC = () => {
           <Table
             columns={columns}
             dataSource={products?.list ?? []}
-            rowKey="productId"
+            rowKey="id"
             loading={loading}
             pagination={{
               current: page,
@@ -300,7 +300,7 @@ const PointsMall: React.FC = () => {
           >
             <Select placeholder="请选择商品分类">
               {categories?.map(cat => (
-                <Select.Option key={cat.categoryId} value={cat.categoryId}>
+                <Select.Option key={cat.id} value={cat.id}>
                   {cat.categoryName}
                 </Select.Option>
               ))}

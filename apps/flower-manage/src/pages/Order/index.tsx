@@ -34,9 +34,9 @@ const OrderPage: React.FC = () => {
   }, [searchParams, fetchOrders]);
 
   // 查看订单详情
-  const handleViewOrderDetail = async (orderId: string) => {
+  const handleViewOrderDetail = async (id: string) => {
     try {
-      const order = await getOrderDetail(orderId);
+      const order = await getOrderDetail(id);
       setSelectedOrder(order);
       setIsDetailModalOpen(true);
     } catch (error) {
@@ -50,7 +50,7 @@ const OrderPage: React.FC = () => {
     try {
       if (!selectedOrder) return;
       const values = form.getFieldsValue();
-      await updateOrderStatus(selectedOrder.orderId, values);
+      await updateOrderStatus(selectedOrder.id, values);
       message.success('订单状态更新成功');
       setSelectedOrder(prev => prev ? { ...prev, status: values.status } : null);
       fetchOrders();
@@ -88,8 +88,8 @@ const OrderPage: React.FC = () => {
   const columns = [
     {
       title: '订单号',
-      dataIndex: 'orderId',
-      key: 'orderId',
+      dataIndex: 'id',
+      key: 'id',
       ellipsis: true,
       width: 160,
     },
@@ -132,7 +132,7 @@ const OrderPage: React.FC = () => {
           <Button
             type="link"
             icon={<EyeOutlined />}
-            onClick={() => handleViewOrderDetail(record.orderId)}
+            onClick={() => handleViewOrderDetail(record.id)}
           >
             详情
           </Button>
@@ -192,7 +192,7 @@ const OrderPage: React.FC = () => {
             setSearchParams(prev => ({ ...prev, ...allValues, page: 1 }));
           }}
         >
-          <Form.Item name="orderId" label="订单号" className={styles.formItem}>
+          <Form.Item name="id" label="订单号" className={styles.formItem}>
             <Input placeholder="请输入订单号" />
           </Form.Item>
           <Form.Item name="userName" label="用户名称" className={styles.formItem}>
@@ -217,7 +217,7 @@ const OrderPage: React.FC = () => {
         <Table
           columns={columns}
           dataSource={orders?.list ?? []}
-          rowKey="orderId"
+          rowKey="id"
           loading={loading}
           pagination={{
             current: page,
@@ -249,7 +249,7 @@ const OrderPage: React.FC = () => {
               <h3>订单信息</h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', marginTop: '12px' }}>
                 <div>
-                  <span style={{ fontWeight: 'bold' }}>订单号：</span>{selectedOrder.orderId}
+                  <span style={{ fontWeight: 'bold' }}>订单号：</span>{selectedOrder.id}
                 </div>
                 <div>
                   <span style={{ fontWeight: 'bold' }}>用户名称：</span>{selectedOrder.userName}
