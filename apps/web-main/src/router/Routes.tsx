@@ -1,5 +1,6 @@
+import NavMenu from '@/components/NavMenu';
 import React, { lazy, Suspense } from 'react';
-import { Routes as RouterRoutes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 // 定义路由配置接口，支持嵌套路由
 export interface RouteConfig {
@@ -8,53 +9,12 @@ export interface RouteConfig {
   children?: RouteConfig[];
 }
 
-// 非认证路由配置
-const nonAuthRoutes: RouteConfig[] = [
-  {
-    path: '/login',
-    element: lazy(() => import('@/pages/auth/LoginPage')),
-  },
-  {
-    path: '/register',
-    element: lazy(() => import('@/pages/auth/RegisterPage')),
-  },
-  {
-    path: '/forgot-password',
-    element: lazy(() => import('@/pages/auth/ForgotPasswordPage')),
-  },
-];
-
 // 主路由配置
 const mainRoutes: RouteConfig[] = [
   {
     path: '/',
-    element: lazy(() => import('@/pages/Dashboard')),
-  },
-  {
-    path: '/image-cover',
-    element: lazy(() => import('@/pages/ImageCover')),
-  },
-  {
-    path: '/redis',
-    element: lazy(() => import('@/pages/Redis')),
-  },
-  {
-    path: '/bukets',
-    element: lazy(() => import('@/pages/bukets')),
-  },
-  // 示例：支持嵌套路由
-  /*
-  {
-    path: '/tools',
-    element: lazy(() => import('@/pages/Tools')),
-    children: [
-      {
-        path: 'settings',
-        element: lazy(() => import('@/pages/Tools/Settings')),
-      },
-    ],
-  },
-  */
+    element: lazy(() => import('@/pages/dashboard')),
+  }
 ];
 
 // 递归生成路由组件
@@ -78,37 +38,14 @@ const generateRoutes = (routes: RouteConfig[]): React.ReactNode => {
   });
 };
 
-// 判断是否为认证页面
-const isAuthPage = (path: string): boolean => {
-  return path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/forgot-password');
-};
-
 const AppRoutesContent: React.FC = () => {
   const location = useLocation();
-  const isAuth = isAuthPage(location.pathname);
-
-  // 认证页面不需要额外的padding
-  if (isAuth) {
-    return (
-      <RouterRoutes>
-        {generateRoutes(nonAuthRoutes)}
-        {generateRoutes(mainRoutes)}
-      </RouterRoutes>
-    );
-  }
-
-  // 非认证页面显示导航栏并应用padding
   return (
-    <div style={{
-      padding: '0 24px',
-      minHeight: '100vh',
-      boxSizing: 'border-box'
-    }}>
-      {/* <NavMenu /> */}
-      <RouterRoutes>
-        {generateRoutes(nonAuthRoutes)}
+    <div className="h-screen">
+      <NavMenu />
+      <Routes>
         {generateRoutes(mainRoutes)}
-      </RouterRoutes>
+      </Routes>
     </div>
   );
 };
