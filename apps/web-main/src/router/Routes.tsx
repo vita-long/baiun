@@ -14,6 +14,22 @@ const mainRoutes: RouteConfig[] = [
   {
     path: '/',
     element: lazy(() => import('@/pages/dashboard')),
+  },
+  {
+    path: '/wrench',
+    element: lazy(() => import('@/pages/wrench')),
+  },
+  {
+    path: '/ainimation',
+    element: lazy(() => import('@/pages/film')),
+  },
+  {
+    path: '/image-wall',
+    element: lazy(() => import('@/pages/image-wall')),
+  },
+  {
+    path: '/threejs',
+    element: lazy(() => import('@/pages/threejs')),
   }
 ];
 

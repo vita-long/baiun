@@ -1,0 +1,27 @@
+.photo-wall {
+  width: 100vw;
+  height: 100vh;
+  transform-style: preserve-3d;
+
+  img {
+    $width: 300px;
+    $height: 400px;
+    width: $width;
+    height: $height;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -150px;
+    backface-visibility: hidden;
+    $r: 500px;
+    $n: 10;
+    $pDeg: calc(360deg / $n);
+
+    @for $i from 1 through $n {
+      &:nth-child(#{$i}) {
+        transform: rotateY(($i - 1) * $pDeg) translate3d(0, 0, -$r);
+      }
+    }
+  }
+}
